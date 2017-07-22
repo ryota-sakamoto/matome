@@ -1,0 +1,45 @@
+@(active: String)
+
+<meta charset="utf-8">
+<div class="row">
+    <nav class="navbar navbar-toggleable-md navbar-light bg-faded fixed-top">
+        <a class="navbar-brand" href="/">Matome</a>
+
+        <div class="collapse navbar-collapse " id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item" id="home">
+                    <a class="nav-link" href="@routes.HomeController.index()">Home</a>
+                </li>
+                <li class="nav-item" id="tools">
+                    <a class="nav-link" href="@routes.ToolController.index()">Tools</a>
+                </li>
+                <li class="nav-item" id="settings">
+                    <a class="nav-link" href="@routes.SettingController.index()">Settings</a>
+                </li>
+                <li class="nav-item" id="about">
+                    <a class="nav-link" href="@routes.AboutController.index()">About</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>
+<script>
+    window.onload = () => {
+        $("#@active").addClass("active");
+        $("table tbody tr").hover(
+            (v) => {
+                $(v.currentTarget).on("click", () => {
+                    location.href = "/" + $(v.currentTarget).attr("id")
+                })
+            },
+            (v) => {
+                $(v.currentTarget).off("click")
+            }
+        )
+    }
+</script>
+<style>
+    body {
+        padding-top: 60px;
+    }
+</style>

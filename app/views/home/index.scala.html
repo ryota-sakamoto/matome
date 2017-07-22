@@ -1,0 +1,41 @@
+@import template._
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        @script()
+    <title>home</title>
+    </head>
+    <body>
+        @header("home")
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-10">
+                <table class="table table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th>type</th>
+                            <th>name</th>
+                            <th>description</th>
+                            <th>update date</th>
+                        </tr>
+                    </thead>
+                    @_type = @{Array("ameblo", "lineblog", "livedoor")}
+                    <tbody>
+                    @for(i <- 0 until 100){
+                            <tr id="data_@i">
+                                <td>@(_type(i % 3))</td>
+                                <td>@i</td>
+                                <td>@(i * i)</td>
+                                <td>@(new java.util.Date())</td>
+                            </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+    </div>
+    </body>
+</html>
