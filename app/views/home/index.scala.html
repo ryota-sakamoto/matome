@@ -22,8 +22,8 @@
                         </tr>
                     </thead>
                     @_type = @{Array("ameblo", "lineblog", "livedoor")}
-                    <tbody>
-                    @for(i <- 0 until 100){
+                    <tbody id="blog_data">
+                    @for(i <- 0 until 10){
                             <tr id="data_@i">
                                 <td>@(_type(i % 3))</td>
                                 <td>@i</td>
@@ -33,6 +33,30 @@
                     }
                     </tbody>
                 </table>
+                <div class="row">
+                    <div class="col-sm-5"></div>
+                    <button type="button" class="btn btn-secondary" id="more">See More</button>
+                    <script>
+                        // TODO
+                        $("#more").on("click", () => {
+                            $.ajax({
+                                url: "/api/v1/blog"
+                            }).done((result) => {
+                                var data = JSON.parse(result);
+                                for (var i = 0; i < data.length; i++) {
+                                    $("#blog_data").append(
+                                        "<tr>" +
+                                            "<td>" + data[i]["type"] + "</td>" +
+                                            "<td>" + data[i]["name"] + "</td>" +
+                                            "<td>" + data[i]["description"] + "</td>" +
+                                            "<td>" + new Date(data[i]["update_date"]) + "</td>" +
+                                        "</tr>"
+                                    );
+                                }
+                            });
+                        });
+                    </script>
+                </div>
             </div>
             <div class="col-sm-1"></div>
         </div>
