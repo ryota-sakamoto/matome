@@ -24,7 +24,7 @@
                     @_type = @{Array("ameblo", "lineblog", "livedoor")}
                     <tbody id="blog_data">
                     @for(i <- 0 until 10){
-                            <tr id="data_@i">
+                            <tr id="data_@i" onclick="view_blog(this)">
                                 <td>@(_type(i % 3))</td>
                                 <td>@i</td>
                                 <td>@(i * i)</td>
@@ -45,7 +45,7 @@
                                 var data = JSON.parse(result);
                                 for (var i = 0; i < data.length; i++) {
                                     $("#blog_data").append(
-                                        "<tr>" +
+                                        "<tr id=\"new_data_" + data[i]["name"] + "\" onclick=\"view_blog(this)\">" +
                                             "<td>" + data[i]["type"] + "</td>" +
                                             "<td>" + data[i]["name"] + "</td>" +
                                             "<td>" + data[i]["description"] + "</td>" +
@@ -55,6 +55,10 @@
                                 }
                             });
                         });
+
+                        var view_blog = (obj) => {
+                            location.href = "/" + obj.getAttribute("id");
+                        }
                     </script>
                 </div>
             </div>

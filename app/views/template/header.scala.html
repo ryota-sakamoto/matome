@@ -26,16 +26,6 @@
 <script>
     window.onload = () => {
         $("#@active").addClass("active");
-        $("table tbody tr").hover(
-            (v) => {
-                $(v.currentTarget).on("click", () => {
-                    location.href = "/" + $(v.currentTarget).attr("id")
-                })
-            },
-            (v) => {
-                $(v.currentTarget).off("click")
-            }
-        )
     }
 </script>
 <style>
