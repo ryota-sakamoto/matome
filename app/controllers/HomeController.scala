@@ -8,7 +8,7 @@ import play.api.mvc._
 @Singleton
 class HomeController @Inject() extends Controller {
     def index = Action {
-        val r = Blog.findById(1)
+        val r = Blog.find()
         Ok(views.html.home.index(r))
     }
 }

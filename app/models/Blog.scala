@@ -15,6 +15,12 @@ object Blog {
         case id ~ blog_type ~ name ~ description ~ update_date => Blog(id, blog_type, name, description, update_date)
     }
 
+    def find(offset: Int = 0, limit: Int = 10) = {
+        DB.withConnection { implicit c =>
+            SQL("select * from blog  where id = {id} ").on("id" -> id).as(mapper *)
+        }
+    }
+
     def findById(id: Int): List[Blog] = {
         DB.withConnection { implicit c =>
             SQL("select * from blog  where id = {id} ").on("id" -> id).as(mapper *)
