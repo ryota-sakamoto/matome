@@ -5,7 +5,7 @@ create table blog (
 	blog_type_id int,
 	name char(30),
 	description varchar(100),
-	update_date date,
+	update_date datetime,
 	primary key(id)
 );
 
