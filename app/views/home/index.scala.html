@@ -1,4 +1,4 @@
-@(list: List[Map[String, Any]])
+@(list: List[Blog])
 @import template._
 
 <!DOCTYPE html>
@@ -26,10 +26,10 @@
                     <tbody id="blog_data">
                     @for(i <- list.indices){
                             <tr id="data_@i" onclick="view_blog(this)">
-                                <td>@list(i).get("blog_type")</td>
-                                <td>@list(i).get("name")</td>
-                                <td>@list(i).get("description")</td>
-                                <td>@list(i).get("update_date")</td>
+                                <td>@list(i).blog_type</td>
+                                <td>@list(i).name</td>
+                                <td>@list(i).description</td>
+                                <td>@list(i).update_date</td>
                             </tr>
                     }
                     </tbody>
