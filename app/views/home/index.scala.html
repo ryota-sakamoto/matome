@@ -1,4 +1,4 @@
-@(list: Seq[Blog])
+@(list: Seq[Article])
 @import template._
 
 <!DOCTYPE html>
@@ -16,18 +16,14 @@
                 <table class="table table-hover table-striped">
                     <thead>
                         <tr>
-                            <th>type</th>
                             <th>name</th>
-                            <th>description</th>
                             <th>update date</th>
                         </tr>
                     </thead>
                     <tbody id="blog_data">
                     @for(i <- list.indices){
-                            <tr id="data_@i" onclick="view_blog(this)">
-                                <td>@list(i).blog_name</td>
-                                <td>@list(i).name</td>
-                                <td>@list(i).description</td>
+                            <tr href="@list(i).url" onclick="view_blog(this)">
+                                <td>@list(i).title</td>
                                 <td>@list(i).update_date</td>
                             </tr>
                     }
@@ -40,7 +36,7 @@
                         var offset = 0
                         $("#more").on("click", () => {
                             $.ajax({
-                                url: "/api/v1/blog",
+                                url: "/api/v1/articles",
                                 data: {
                                     offset: offset += 10
                                 }
@@ -49,10 +45,8 @@
                                 for (var i = 0; i < data.length; i++) {
                                     var date = moment(new Date(data[i]["update_date"]));
                                     $("#blog_data").append(
-                                        sprintf("<tr id=\"new_data_%s\" onclick=\"view_blog(this)\">", data[i]["name"]) +
-                                            sprintf("<td>%s</td>", data[i]["blog_name"]) +
-                                            sprintf("<td>%s</td>", data[i]["name"]) +
-                                            sprintf("<td>%s</td>", data[i]["description"]) +
+                                        sprintf("<tr href=\"%s\" onclick=\"view_blog(this)\">", data[i]["url"]) +
+                                            sprintf("<td>%s</td>", data[i]["title"]) +
                                             sprintf("<td>%s</td>", date.format("YYYY-MM-DD HH:mm:ss")) +
                                         "</tr>"
                                     );
@@ -61,7 +55,7 @@
                         });
 
                         var view_blog = (obj) => {
-                            location.href = "/" + obj.getAttribute("id");
+                            location.href = obj.getAttribute("href");
                         }
                     </script>
                 </div>
