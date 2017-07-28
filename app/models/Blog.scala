@@ -16,6 +16,23 @@ object Blog extends Model[Blog] {
         case id ~ name ~ url ~ update_date => Blog(id, name, url, update_date)
     }
 
+    // TODO fix and move Model
+    def delete() = {
+        DB.withConnection {implicit c =>
+            SQL("delete from %s".format(db_name)).executeUpdate()
+        }
+    }
+
+    // TODO fix and move Model
+    def insert(blog: Blog) = {
+        DB.withConnection { implicit c =>
+            SQL(
+                """
+                   insert into %s value(null, {name}, {url}, now())
+                """.format(db_name)).on("name" -> blog.name, "url" -> blog.url).executeInsert()
+        }
+    }
+
     implicit object BlogWriter extends Writes[Blog] {
         override def writes(blog: Blog) = {
             Json.toJson(
