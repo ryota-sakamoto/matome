@@ -10,7 +10,7 @@ import play.api.libs.json.{Json, Writes}
 
 case class Blog(id: Int, name: String, url: String, update_date: Date)
 
-object Blog {
+object Blog extends Model[Blog] {
     val parser = int("id") ~ str("name") ~ str("url") ~ date("update_date")
     val mapper = parser.map {
         case id ~ name ~ url ~ update_date => Blog(id, name, url, update_date)

@@ -1,5 +1,7 @@
 GET     /                           controllers.HomeController.index
 GET     /settings                   controllers.SettingController.index
+GET     /settings/blogs             controllers.SettingController.blogList
+POST    /settings/blogs             controllers.SettingController.updateBlogList
 GET     /tools                      controllers.ToolController.index
 GET     /about                      controllers.AboutController.index
 

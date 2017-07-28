@@ -1,0 +1,59 @@
+@(blog_list:Seq[Blog])
+
+@import template._
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        @script()
+        <title>Settings</title>
+    </head>
+    <body>
+        @header("settings")
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-10">
+                <form action="" method="post">
+                    <fieldset class="form-group" id="url-list">
+                        @for(i <- blog_list.indices) {
+                            <div class="input-group">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button" id="minus-button">-</button>
+                                </span>
+                                <input type="text" class="form-control" name="name[@i]" value="@blog_list(i).name" placeholder="Blog name" >
+                                <input type="text" class="form-control" name="url[@i]" value="@blog_list(i).url" placeholder="URL">
+                            </div>
+                        }
+                    </fieldset>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="button" class="btn btn-info" id="plus-button">+</button>
+                    <script>
+                        let n = @blog_list.length;
+                        const input_form = (n) => {
+                            return `<div class="input-group">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button" id="minus-button">-</button>
+                                </span>
+                                <input type="text" class="form-control" name="name[${n}]" placeholder="Blog name" >
+                                <input type="text" class="form-control" name="url[${n}]" placeholder="URL">
+                            </div>`;
+                        };
+                        $(document).on("click", "#plus-button", () => {
+                            $("#url-list").append(input_form(n++));
+                        });
+                        $(document).on("click", "#minus-button", (v) => {
+                            $(v.currentTarget.parentNode.parentNode).remove();
+                        });
+                    </script>
+                    <style>
+                        .input-group {
+                            margin-bottom: 10px;
+                        }
+                    </style>
+                </form>
+            </div>
+        </div>
+    </div>
+    </body>
+</html>
