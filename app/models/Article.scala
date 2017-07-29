@@ -31,7 +31,7 @@ object Article extends Model[Article] {
             Json.toJson(
                 Map(
                     "id" -> Json.toJson(article.id),
-                    "name" -> Json.toJson(article.title),
+                    "title" -> Json.toJson(article.title),
                     "url" -> Json.toJson(article.url),
                     "update_date" -> Json.toJson(article.update_date)
                 )

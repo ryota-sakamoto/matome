@@ -44,7 +44,7 @@ class SettingController @Inject() extends Controller {
         }
         Blog.delete()
         m.foreach { s =>
-            Blog.insert(Blog(0, s._2._1, s._2._2, new java.util.Date()))
+            Blog.insert(Blog(s._1.toInt + 1, s._2._1, s._2._2, new java.util.Date()))
         }
 
         Redirect(routes.SettingController.blogList())

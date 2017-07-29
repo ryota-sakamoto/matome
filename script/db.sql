@@ -16,3 +16,4 @@ create table article (
 	update_date datetime,
 	primary key(id)
 );
+create index article_date on article (update_date);

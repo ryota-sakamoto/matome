@@ -20,11 +20,11 @@
                             <th>update date</th>
                         </tr>
                     </thead>
-                    <tbody id="blog_data">
+                    <tbody id="articles">
                     @for(i <- list.indices){
-                            <tr href="@list(i).url" onclick="view_blog(this)">
+                            <tr href="@list(i).url" onclick="view_article(this)">
                                 <td>@list(i).title</td>
-                                <td>@list(i).update_date</td>
+                                <td>@("%tY-%<tm-%<td %<tH:%<tM:%<tS".format(list(i).update_date))</td>
                             </tr>
                     }
                     </tbody>
@@ -33,7 +33,7 @@
                     <div class="col-sm-5"></div>
                     <button type="button" class="btn btn-secondary" id="more">See More</button>
                     <script>
-                        var offset = 0
+                        let offset = 0;
                         $("#more").on("click", () => {
                             $.ajax({
                                 url: "/api/v1/articles",
@@ -41,20 +41,24 @@
                                     offset: offset += 10
                                 }
                             }).done((result) => {
-                                var data = JSON.parse(result);
-                                for (var i = 0; i < data.length; i++) {
-                                    var date = moment(new Date(data[i]["update_date"]));
-                                    $("#blog_data").append(
-                                        sprintf("<tr href=\"%s\" onclick=\"view_blog(this)\">", data[i]["url"]) +
-                                            sprintf("<td>%s</td>", data[i]["title"]) +
-                                            sprintf("<td>%s</td>", date.format("YYYY-MM-DD HH:mm:ss")) +
-                                        "</tr>"
-                                    );
-                                }
+                                const data = JSON.parse(result);
+                                create_article_table(data);
                             });
                         });
 
-                        var view_blog = (obj) => {
+                        const create_article_table = (data) => {
+                            for (let i = 0; i < data.length; i++) {
+                                const date = moment(new Date(data[i]["update_date"]));
+                                $("#articles").append(
+                                        `<tr href="${data[i]["url"]}" onclick="view_article(this)">
+                                            <td>${data[i]["title"]}</td>
+                                            <td>${date.format("YYYY-MM-DD HH:mm:ss")}</td>
+                                        </tr>`
+                                );
+                            }
+                        }
+
+                        const view_article = (obj) => {
                             location.href = obj.getAttribute("href");
                         }
                     </script>

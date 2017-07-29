@@ -1,15 +1,14 @@
 package controllers
 
-import java.util.Date
 import javax.inject._
 
 import models.{Article, Blog}
 import play.api.mvc._
 import play.api.libs.ws._
-import utils.Aggregation
+import utils.{Aggregation, DateUtil}
 
 import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{Await}
 import scala.util.{Failure, Success}
 
 class CronController @Inject()(ws: WSClient) extends Controller {
@@ -30,7 +29,7 @@ class CronController @Inject()(ws: WSClient) extends Controller {
                         val title =  (_s \ "title").text
                         val link = (_s \ "link").text
                         val date = (_s \ "date").text
-                        Article.insert(Article(0, 1, title, link, new Date()))
+                        Article.insert(Article(0, 1, title, link, DateUtil.convertToDate(date)))
                     }
                 }
                 case Failure(e) => printf("%s\n", e)

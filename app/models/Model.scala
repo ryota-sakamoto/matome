@@ -15,6 +15,7 @@ trait Model[T] extends ModelClassTag[T]{
         DB.withConnection { implicit c =>
             SQL("""
                 select * from %s
+                order by update_date desc
                 limit {limit} offset {offset}
                 """.format(db_name)).on("limit" -> limit, "offset" -> offset).as(mapper *)
         }

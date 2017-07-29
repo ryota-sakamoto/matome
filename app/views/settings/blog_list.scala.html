@@ -19,8 +19,9 @@
                         @for(i <- blog_list.indices) {
                             <div class="input-group">
                                 <span class="input-group-btn">
-                                    <button class="btn btn-default" type="button" id="minus-button">-</button>
+                                    <button class="btn btn-danger" type="button" id="minus-button">-</button>
                                 </span>
+                                <span class="input-group-addon blog_id">@blog_list(i).id</span>
                                 <input type="text" class="form-control" name="name[@i]" value="@blog_list(i).name" placeholder="Blog name" >
                                 <input type="text" class="form-control" name="url[@i]" value="@blog_list(i).url" placeholder="URL">
                             </div>
@@ -28,13 +29,15 @@
                     </fieldset>
                     <button type="submit" class="btn btn-primary">Submit</button>
                     <button type="button" class="btn btn-info" id="plus-button">+</button>
+                    <button type="button" class="btn btn-secondary" id="aggregate">Aggregate</button>
                     <script>
                         let n = @blog_list.length;
                         const input_form = (n) => {
                             return `<div class="input-group">
                                 <span class="input-group-btn">
-                                    <button class="btn btn-default" type="button" id="minus-button">-</button>
+                                    <button class="btn btn-danger" type="button" id="minus-button">-</button>
                                 </span>
+                                <span class="input-group-addon blog_id">${n+1}</span>
                                 <input type="text" class="form-control" name="name[${n}]" placeholder="Blog name" >
                                 <input type="text" class="form-control" name="url[${n}]" placeholder="URL">
                             </div>`;
@@ -43,7 +46,16 @@
                             $("#url-list").append(input_form(n++));
                         });
                         $(document).on("click", "#minus-button", (v) => {
+                            n--;
                             $(v.currentTarget.parentNode.parentNode).remove();
+                        });
+                        $("#aggregate").on("click", () => {
+                            $.ajax({
+                                url: "@routes.CronController.aggregateArticle()",
+                                type: "post"
+                            }).done(() => {
+                                alert("success")
+                            })
                         });
                     </script>
                     <style>
