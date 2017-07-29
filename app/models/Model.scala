@@ -19,6 +19,14 @@ trait Model[T] extends ModelClassTag[T]{
                 """.format(db_name)).on("limit" -> limit, "offset" -> offset).as(mapper *)
         }
     }
+
+    def findById(id: Int): Option[T] = {
+        DB.withConnection { implicit c =>
+            SQL("""
+                select * from %s where id = {id}
+                """.format(db_name)).on("id" -> id).as(mapper.singleOpt)
+        }
+    }
 }
 
 class ModelClassTag[T](implicit class_tag: ClassTag[T]) {
