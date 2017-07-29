@@ -14,3 +14,10 @@ $ scala -version // 2.11
 ```
 $ activtor run
 ```
+
+## 実装
+- User機能
+- 処理をActorに移動
+- Modelの共通化
+- スマホ対応
+- リファクタリング
