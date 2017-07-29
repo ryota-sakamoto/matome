@@ -29,7 +29,10 @@ class CronController @Inject()(ws: WSClient) extends Controller {
                         val title =  (_s \ "title").text
                         val link = (_s \ "link").text
                         val date = (_s \ "date").text
-                        Article.insert(Article(0, 1, title, link, DateUtil.convertToDate(date)))
+                        val update_date = DateUtil.convertToDate(date)
+                        if (update_date.compareTo(blog.update_date) > 0) {
+                            Article.insert(Article(0, 1, title, link, update_date))
+                        }
                     }
                 }
                 case Failure(e) => printf("%s\n", e)
