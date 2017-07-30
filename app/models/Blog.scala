@@ -7,7 +7,6 @@ import anorm.SqlParser._
 import play.api.db.DB
 import play.api.Play.current
 import play.api.libs.json.{Json, Writes}
-import utils.Validation
 
 case class Blog(id: Int, name: String, url: String, update_date: Date)
 
@@ -17,22 +16,12 @@ object Blog extends Model[Blog] {
         case id ~ name ~ url ~ update_date => Blog(id, name, url, update_date)
     }
 
-    // TODO fix and move Model
-    def delete() = {
-        DB.withConnection {implicit c =>
-            SQL("delete from %s".format(db_name)).executeUpdate()
-        }
-    }
-
-    // TODO fix and move Model
-    def insert(blog: Blog) = {
-        if (Validation.isURL(blog.url)) {
-            DB.withConnection { implicit c =>
-                SQL(
-                    """
-                   insert into %s value({id}, {name}, {url}, now())
-                """.format(db_name)).on("id" -> blog.id, "name" -> blog.name, "url" -> blog.url).executeInsert()
-            }
+    def update(blog: Blog) = {
+        DB.withConnection { implicit c =>
+            SQL(
+                """
+                   update %s blog set name = {name}, url = {url}, update_date = {update_date} where id = {id}
+                """.format(db_name)).on("id" -> blog.id, "name" -> blog.name, "url" -> blog.url, "update_date" -> blog.update_date).executeUpdate()
         }
     }
 
