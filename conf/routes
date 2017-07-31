@@ -4,6 +4,9 @@ GET     /settings/blogs             controllers.SettingController.blogList
 POST    /settings/blogs             controllers.SettingController.updateBlogList
 GET     /tools                      controllers.ToolController.index
 GET     /about                      controllers.AboutController.index
+GET     /login                      controllers.LoginController.index
+POST    /login                      controllers.LoginController.login
+GET     /:id                        controllers.UserController.show(id: String)
 
 GET     /api/v1/articles            controllers.ApiController.getArticle
 POST    /api/v1/aggregate           controllers.CronController.aggregateArticle
