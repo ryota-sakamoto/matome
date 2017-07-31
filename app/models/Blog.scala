@@ -25,6 +25,11 @@ object Blog extends Model[Blog] {
         }
     }
 
+    override def find(offset: Int = 0, limit: Int = 10): Seq[Blog] = {
+        val s = super.find(offset, limit)
+        s.sortWith { _.id < _.id }
+    }
+
     implicit object BlogWriter extends Writes[Blog] {
         override def writes(blog: Blog) = {
             Json.toJson(
