@@ -17,3 +17,10 @@ create table article (
 	primary key(id)
 );
 create index article_date on article (update_date);
+
+create table user (
+	id int AUTO_INCREMENT,
+	name char(15) not null,
+	password char(32) not null,
+	primary key(id)
+);

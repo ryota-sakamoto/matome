@@ -1,19 +1,20 @@
 package controllers
 
 import javax.inject._
-import play.api.mvc._
 
+import play.api.mvc._
 import models.Blog
+import play.cache.CacheApi
 
 @Singleton
-class SettingController @Inject() extends Controller {
+class SettingController @Inject()(cache: CacheApi) extends Controller {
     def index = Action {
       Ok(views.html.settings.index())
     }
 
     def blogList = Action {
         val b = Blog.find()
-        Ok(views.html.settings.blog_list(b))
+        Ok(views.html.settings.blog_list(cache, b))
     }
 
     // TODO use form and refactoring

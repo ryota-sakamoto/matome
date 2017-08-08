@@ -2,8 +2,6 @@ GET     /                           controllers.HomeController.index
 GET     /settings                   controllers.SettingController.index
 GET     /settings/blogs             controllers.SettingController.blogList
 POST    /settings/blogs             controllers.SettingController.updateBlogList
-GET     /tools                      controllers.ToolController.index
-GET     /about                      controllers.AboutController.index
 GET     /login                      controllers.LoginController.index
 POST    /login                      controllers.LoginController.login
 GET     /:id                        controllers.UserController.show(id: String)

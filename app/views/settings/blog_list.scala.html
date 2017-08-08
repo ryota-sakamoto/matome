@@ -1,6 +1,6 @@
-@(blog_list:Seq[Blog])
-
 @import template._
+@import play.cache.CacheApi
+@(cache: CacheApi, blog_list:Seq[Blog])
 
 <!DOCTYPE html>
 <html lang="en">
@@ -9,7 +9,7 @@
         <title>Settings</title>
     </head>
     <body>
-        @header("settings")
+        @header(cache, "settings")
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-1"></div>
