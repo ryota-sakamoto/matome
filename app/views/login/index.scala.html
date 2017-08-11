@@ -1,4 +1,9 @@
-@import template._
+@import template.{script, header}
+@import play.cache.CacheApi
+@import forms.Login
+@import b4.vertical.fieldConstructor
+
+@(cache: CacheApi, form: Form[Login], error: Option[String])(implicit messages:Messages)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -7,5 +12,38 @@
     <title>Login</title>
     </head>
     <body>
+        @header(cache, "login")
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-1"></div>
+                <div class="col-sm-10">
+                    <div class="col-sm-4">
+                        @error match {
+
+                            case Some(error) => {
+                                <div class="alert alert-danger" role="alert">@error</div>
+                            }
+
+                            case _ => {
+
+                            }
+
+                        }
+
+                        @b4.form(routes.LoginController.login()) {
+                            <div class="form-group">
+                                <label>UserId</label>
+                                @b4.text(form("name"), 'class -> "form-control", 'placeholder -> "UserId")
+                            </div>
+                            <div class="form-group">
+                                <label >Password</label>
+                                @b4.password(form("password"), 'class -> "form-control", 'placeholder -> "Password")
+                            </div>
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
     </body>
 </html>
