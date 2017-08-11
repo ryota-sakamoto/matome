@@ -20,7 +20,9 @@ create index article_date on article (update_date);
 
 create table user (
 	id int AUTO_INCREMENT,
+	email char(255) not null unique,
 	name char(15) not null,
 	password char(32) not null,
+	formal_flag TINYINT default 0,
 	primary key(id)
 );

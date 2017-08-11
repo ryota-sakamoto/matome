@@ -1,9 +1,9 @@
 @import template.{script, header}
 @import play.cache.CacheApi
-@import forms.Login
+@import forms.{Login, Register}
 @import b4.vertical.fieldConstructor
 
-@(cache: CacheApi, form: Form[Login], error: Option[String])(implicit messages:Messages)
+@(cache: CacheApi, login_form: Form[Login], register_form: Form[Register], error: Option[String])(implicit messages:Messages)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -29,21 +29,56 @@
                             }
 
                         }
-
-                        @b4.form(routes.LoginController.login()) {
-                            <div class="form-group">
-                                <label>UserId</label>
-                                @b4.text(form("name"), 'class -> "form-control", 'placeholder -> "UserId")
+                        <div class="btn-group" data-toggle="buttons">
+                            <label class="btn btn-outline-primary active" id="login-screen">
+                                <input type="radio" name="options" autocomplete="off" checked> Login
+                            </label>
+                            <label class="btn btn-outline-primary" id="register-screen">
+                                <input type="radio" name="options" autocomplete="off"> Register
+                            </label>
+                        </div>
+                        <div class="card">
+                            <div id="login-screen-block" class="card-block">
+                            @b4.form(routes.LoginController.login()) {
+                                <div class="form-group">
+                                    <label>UserId</label>
+                                    @b4.text(login_form("name"), 'placeholder -> "UserId")
+                                </div>
+                                <div class="form-group">
+                                    <label >Password</label>
+                                    @b4.password(login_form("password"), 'placeholder -> "Password")
+                                </div>
+                                <button type="submit" class="btn btn-primary">Login</button>
+                            }
                             </div>
-                            <div class="form-group">
-                                <label >Password</label>
-                                @b4.password(form("password"), 'class -> "form-control", 'placeholder -> "Password")
+                            <div id="register-screen-block" class="card-block" style="display: none">
+                                @b4.form(routes.RegisterController.register()) {
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        @b4.email(register_form("email"), 'placeholder -> "Email")
+                                    </div>
+                                    <div class="form-group">
+                                        <label>UserId</label>
+                                        @b4.text(register_form("name"), 'placeholder -> "UserId")
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Password</label>
+                                        @b4.password(register_form("password"), 'placeholder -> "Password")
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Register</button>
+                                }
                             </div>
-                            <button type="submit" class="btn btn-primary">Login</button>
-                        }
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+        <script>
+            $(".btn-group .btn").on("click", (v) => {
+                const id = $(v.target).attr("id");
+                $(".card .card-block").hide();
+                $(`#${id}-block`).show();
+            });
+        </script>
     </body>
 </html>
