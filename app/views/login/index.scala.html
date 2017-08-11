@@ -3,7 +3,7 @@
 @import forms.{Login, Register}
 @import b4.vertical.fieldConstructor
 
-@(cache: CacheApi, login_form: Form[Login], register_form: Form[Register], error: Option[String])(implicit messages:Messages)
+@(cache: CacheApi, user_uuid: String, login_form: Form[Login], register_form: Form[Register], error: Option[String])(implicit messages:Messages)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -12,7 +12,7 @@
     <title>Login</title>
     </head>
     <body>
-        @header(cache, "login")
+        @header(cache, user_uuid, "login")
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-1"></div>

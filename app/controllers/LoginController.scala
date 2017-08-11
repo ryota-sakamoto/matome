@@ -11,27 +11,33 @@ import models.User
 import utils.Security
 
 @Singleton
-class LoginController @Inject()(cache: CacheApi, val messagesApi: MessagesApi)extends Controller with I18nSupport{
+class LoginController @Inject()(cache: CacheApi, val messagesApi: MessagesApi)extends Controller with I18nSupport {
     def index = Action {
-        Ok(views.html.login.index(cache, LoginForm.form, RegisterForm.form, null))
+        Ok(views.html.login.index(cache, "", LoginForm.form, RegisterForm.form, null))
     }
 
     def login = Action { implicit request =>
         val f = LoginForm.form.bindFromRequest
 
         val user = User.login(f.data("name"), Security.md5(f.data("password")))
-        val error = user match {
+        user match {
             case Some(u) => {
                 Logger.info("Login success id: %d".format(u.id))
-                cache.set("user", u)
-                null
+                val uuid = Security.generateUUID()
+                cache.set(uuid, u)
+                Redirect(routes.HomeController.index()).withSession(Security.session_name -> uuid)
             }
             case None => {
                 Logger.info("Login Failed")
-                "Login failed"
+                Ok(views.html.login.index(cache, "", LoginForm.form, RegisterForm.form, Option("Login failed")))
             }
         }
+    }
 
-        Ok(views.html.login.index(cache, LoginForm.form, RegisterForm.form, Option(error)))
+    def logout = Action { implicit request =>
+        val user_uuid = Security.getSessionUUID(request)
+        cache.remove(Security.session_name)
+
+        Redirect(routes.LoginController.index()).withSession(request.session - user_uuid)
     }
 }

@@ -12,9 +12,14 @@ class SettingController @Inject()(cache: CacheApi) extends Controller {
       Ok(views.html.settings.index())
     }
 
-    def blogList = Action {
+    def blogList = Action { implicit request =>
+        val user_uuid = request.session.get("user_uuid") match {
+            case Some(uuid) => uuid.toString
+            case None => ""
+        }
+
         val b = Blog.find()
-        Ok(views.html.settings.blog_list(cache, b))
+        Ok(views.html.settings.blog_list(cache, user_uuid, b))
     }
 
     // TODO use form and refactoring

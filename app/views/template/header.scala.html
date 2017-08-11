@@ -1,7 +1,7 @@
 @import play.cache.CacheApi
-@(cache: CacheApi, active: String)
+@(cache: CacheApi, user_uuid: String, active: String)
 
-@user = @{Option(cache.get("user"))}
+@user = @{Option(cache.get(user_uuid))}
 
 <meta charset="utf-8">
 <div class="row">

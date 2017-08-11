@@ -4,6 +4,7 @@ GET     /settings/blogs             controllers.SettingController.blogList
 POST    /settings/blogs             controllers.SettingController.updateBlogList
 GET     /login                      controllers.LoginController.index
 POST    /login                      controllers.LoginController.login
+GET     /logout                     controllers.LoginController.logout
 POST    /register                   controllers.RegisterController.register
 GET     /:id                        controllers.UserController.show(id: String)
 

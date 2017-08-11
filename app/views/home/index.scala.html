@@ -1,7 +1,7 @@
 @import template._
 @import play.cache.CacheApi
 
-@(cache: CacheApi, list: Seq[Article])
+@(cache: CacheApi, user_uuid: String, list: Seq[Article])
 
 <!DOCTYPE html>
 <html lang="en">
@@ -10,7 +10,7 @@
     <title>home</title>
     </head>
     <body>
-        @header(cache, "home")
+        @header(cache, user_uuid, "home")
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-1"></div>
