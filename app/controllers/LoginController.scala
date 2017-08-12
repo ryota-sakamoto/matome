@@ -8,7 +8,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.Logger
 import forms.{LoginForm, RegisterForm}
 import models.User
-import utils.Security
+import utils.{Security, UserCache}
 
 @Singleton
 class LoginController @Inject()(cache: CacheApi, val messagesApi: MessagesApi)extends Controller with I18nSupport {
@@ -23,8 +23,7 @@ class LoginController @Inject()(cache: CacheApi, val messagesApi: MessagesApi)ex
         user match {
             case Some(u) => {
                 Logger.info("Login success id: %d".format(u.id))
-                val uuid = Security.generateUUID()
-                cache.set(uuid, u)
+                val uuid = UserCache.set(cache, u)
                 Redirect(routes.HomeController.index()).withSession(Security.session_name -> uuid)
             }
             case None => {
@@ -36,7 +35,7 @@ class LoginController @Inject()(cache: CacheApi, val messagesApi: MessagesApi)ex
 
     def logout = Action { implicit request =>
         val user_uuid = Security.getSessionUUID(request)
-        cache.remove(Security.session_name)
+        UserCache.remove(cache, user_uuid)
 
         Redirect(routes.LoginController.index()).withSession(request.session - user_uuid)
     }
