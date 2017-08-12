@@ -37,6 +37,6 @@ class LoginController @Inject()(cache: CacheApi, val messagesApi: MessagesApi)ex
         val user_uuid = Security.getSessionUUID(request)
         UserCache.remove(cache, user_uuid)
 
-        Redirect(routes.LoginController.index()).withSession(request.session - user_uuid)
+        Redirect(routes.LoginController.index()).withSession(request.session - Security.session_name)
     }
 }

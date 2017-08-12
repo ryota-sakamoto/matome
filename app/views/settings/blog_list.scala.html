@@ -21,8 +21,7 @@
                                 <span class="input-group-btn">
                                     <button class="btn btn-danger" type="button" id="minus-button">-</button>
                                 </span>
-                                <span class="input-group-addon blog_id">@blog_list(i).id</span>
-                                <input type="text" class="form-control" name="name[@i]" value="@blog_list(i).name" placeholder="Blog name" >
+                                <input type="text" class="form-control" name="name[@i]" value="@blog_list(i).name" placeholder="Blog name" disabled>
                                 <input type="text" class="form-control" name="url[@i]" value="@blog_list(i).url" placeholder="URL">
                             </div>
                         }
@@ -37,8 +36,7 @@
                                 <span class="input-group-btn">
                                     <button class="btn btn-danger" type="button" id="minus-button">-</button>
                                 </span>
-                                <span class="input-group-addon blog_id">${n+1}</span>
-                                <input type="text" class="form-control" name="name[${n}]" placeholder="Blog name" >
+                                <input type="text" class="form-control" name="name[${n}]" placeholder="Blog name" disabled>
                                 <input type="text" class="form-control" name="url[${n}]" placeholder="URL">
                             </div>`;
                         };

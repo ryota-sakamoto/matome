@@ -18,6 +18,9 @@ $ activtor run
 ## 実装
 - User機能
 - 処理をActorに移動
-- Modelの共通化
+- Modelの共通化(DIしたい)
 - スマホ対応
 - リファクタリング
+- 絵文字問題
+- 認証周り
+- API
