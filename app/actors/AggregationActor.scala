@@ -13,12 +13,13 @@ import scala.concurrent.duration.Duration
 import scala.util.{Failure, Success}
 
 class AggregationActor @Inject()(ws_client: WSClient) extends Actor {
+    val prefix = "[AggregationActor]"
     def receive = {
         case blog: Blog => {
             implicit val context = play.api.libs.concurrent.Execution.Implicits.defaultContext
             val url = Aggregation.getRSSUrl(blog.url)
             val ws = ws_client.url(url)
-            Logger.debug("receive aggregation: %s".format(url))
+            Logger.debug(s"$prefix receive aggregation: $url")
 
             val response = ws.get().map { r =>
                 r.xml \ "_"
@@ -53,7 +54,7 @@ class AggregationActor @Inject()(ws_client: WSClient) extends Actor {
                     Blog.update(Blog(blog.id, name, blog.url, last_update_date))
                 }
                 case Failure(e) => {
-                    printf("%s\n", e)
+                    Logger.error(s"$prefix $e")
                 }
             }
         }

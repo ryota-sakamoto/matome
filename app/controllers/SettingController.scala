@@ -51,7 +51,7 @@ class SettingController @Inject()(cache: CacheApi) extends Controller {
             }
         }
         m.foreach { s =>
-            Blog.update(Blog(s._1.toInt + 1, s._2._1, s._2._2, new java.util.Date()))
+            Blog.update(Blog(s._1.toInt + 1, s._2._1, s._2._2, new java.util.Date(0L)))
         }
 
         Redirect(routes.SettingController.blogList())

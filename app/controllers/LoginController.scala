@@ -12,6 +12,8 @@ import utils.{Security, UserCache}
 
 @Singleton
 class LoginController @Inject()(cache: CacheApi, val messagesApi: MessagesApi)extends Controller with I18nSupport {
+    val prefix = "[LoginController]"
+
     def index = Action {
         Ok(views.html.login.index(cache, "", LoginForm.form, RegisterForm.form, null))
     }
@@ -22,12 +24,12 @@ class LoginController @Inject()(cache: CacheApi, val messagesApi: MessagesApi)ex
         val user = User.login(f.data("name"), Security.md5(f.data("password")))
         user match {
             case Some(u) => {
-                Logger.info("Login success id: %d".format(u.id))
+                Logger.info(s"$prefix Login success id: ${u.id}")
                 val uuid = UserCache.set(cache, u)
                 Redirect(routes.HomeController.index()).withSession(Security.session_name -> uuid)
             }
             case None => {
-                Logger.info("Login Failed")
+                Logger.info(s"$prefix Login Failed")
                 Ok(views.html.login.index(cache, "", LoginForm.form, RegisterForm.form, Option("Login failed")))
             }
         }
