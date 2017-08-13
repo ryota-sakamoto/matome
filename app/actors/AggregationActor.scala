@@ -1,22 +1,23 @@
 package actors
 
+import javax.inject.Inject
+
 import akka.actor.Actor
 import models.{Article, Blog}
 import play.Logger
 import play.api.libs.ws._
-import play.api.Play.current
 import utils.{Aggregation, DateUtil}
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import scala.util.{Failure, Success}
 
-class AggregationActor extends Actor {
+class AggregationActor @Inject()(ws_client: WSClient) extends Actor {
     def receive = {
         case blog: Blog => {
             implicit val context = play.api.libs.concurrent.Execution.Implicits.defaultContext
             val url = Aggregation.getRSSUrl(blog.url)
-            val ws = WS.url(url)
+            val ws = ws_client.url(url)
             Logger.debug("receive aggregation: %s".format(url))
 
             val response = ws.get().map { r =>
