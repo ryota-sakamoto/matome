@@ -1,7 +1,5 @@
 package actions
 
-import javax.inject.Inject
-
 import controllers.routes
 import play.api.Logger
 import play.api.mvc.{Action, AnyContent, Request, Result}
@@ -12,7 +10,7 @@ import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import utils.{Security, UserCache}
 
-case class AuthAction[A] @Inject() (cache: CacheApi, action: Action[A]) extends Action[A] {
+case class AuthAction[A] (cache: CacheApi, action: Action[A]) extends Action[A] {
     def apply(request: Request[A]): Future[Result] = {
         val prefix = "[AuthAction]"
         Logger.info(s"$prefix start")
@@ -26,7 +24,7 @@ case class AuthAction[A] @Inject() (cache: CacheApi, action: Action[A]) extends 
             }
             case None => {
                 Logger.info(s"$prefix auth failed")
-                Future(Redirect(routes.LoginController.index()))
+                Future(Redirect(routes.LoginController.index()).withSession(request.session - Security.session_name))
             }
         }
     }

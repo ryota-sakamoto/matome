@@ -2,6 +2,7 @@ package controllers
 
 import javax.inject._
 
+import actions.AuthAction
 import play.api.mvc._
 import models.Blog
 import play.cache.CacheApi
@@ -12,18 +13,19 @@ class SettingController @Inject()(cache: CacheApi) extends Controller {
       Ok(views.html.settings.index())
     }
 
-    def blogList = Action { implicit request =>
-        val user_uuid = request.session.get("user_uuid") match {
-            case Some(uuid) => uuid.toString
-            case None => ""
-        }
+    def blogList = AuthAction( cache,
+        Action { implicit request =>
+            val user_uuid = request.session.get("user_uuid") match {
+                case Some(uuid) => uuid.toString
+                case None => ""
+            }
 
-        val b = Blog.find()
-        Ok(views.html.settings.blog_list(cache, user_uuid, b))
-    }
+            val b = Blog.find()
+            Ok(views.html.settings.blog_list(cache, user_uuid, b))
+        })
 
     // TODO use form and refactoring
-    def updateBlogList = Action { implicit request =>
+    def updateBlogList = AuthAction( cache, Action { implicit request =>
         val name_key_regex = """name\[(\d+)\]""".r
         val url_key_regex = """url\[(.+)\]""".r
         val data = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data
@@ -53,5 +55,5 @@ class SettingController @Inject()(cache: CacheApi) extends Controller {
         }
 
         Redirect(routes.SettingController.blogList())
-    }
+    })
 }
