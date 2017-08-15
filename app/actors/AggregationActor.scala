@@ -3,10 +3,11 @@ package actors
 import javax.inject.Inject
 
 import akka.actor.Actor
+import models.aggregation.Livedoor
 import models.{Article, Blog}
 import play.Logger
 import play.api.libs.ws._
-import utils.{Aggregation, DateUtil}
+import utils.Aggregation
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
@@ -27,30 +28,26 @@ class AggregationActor @Inject()(ws_client: WSClient) extends Actor {
             Await.ready(response, Duration.Inf)
             response.value.get match {
                 case Success(s) => {
-                    var last_update_date = blog.update_date
-                    var name = blog.name
-                    s.foreach { _s =>
-                        _s.label match {
-                            case "channel" => {
-                                name = (_s \ "title").text
-                            }
-                            case "item" => {
-                                val title =  (_s \ "title").text.filter{ c =>
-                                    Character.isHighSurrogate(c) == Character.isLowSurrogate(c)
-                                }
-                                val link = (_s \ "link").text
-                                val date = (_s \ "date").text
-                                val update_date = DateUtil.convertToDate(date)
-                                if (update_date.compareTo(blog.update_date) > 0) {
-                                    Article.insert(Article(0, blog.id, title, link, update_date))
-                                    if (update_date.compareTo(last_update_date) > 0) {
-                                        last_update_date = update_date
-                                    }
-                                }
-                            }
-                            case _ =>
+                    val article_data = "livedoor" match { // TODO
+                        case Livedoor.blog_type => Livedoor.aggregate(s)
+                        case _ => {
+                            Logger.error("Not Found Blog Type")
+                            Seq.empty
                         }
                     }
+
+                    var name = blog.name
+                    var last_update_date = blog.update_date
+
+                    article_data.foreach { data =>
+                        if (data.update_date.compareTo(blog.update_date) > 0) {
+                            Article.insert(Article(0, blog.id, data.title, data.link, data.update_date))
+                            if (data.update_date.compareTo(last_update_date) > 0) {
+                                last_update_date = data.update_date
+                            }
+                        }
+                    }
+
                     Blog.update(Blog(blog.id, name, blog.url, last_update_date))
                 }
                 case Failure(e) => {
