@@ -1,17 +1,13 @@
 package models.aggregation
 
-import java.util.Date
-
 import utils.Aggregation
 import scala.xml.NodeSeq
 
-case class Livedoor(title: String, link: String, update_date: Date)
-
-object Livedoor extends AggregationTrait[Livedoor] {
+object Livedoor extends AggregationTrait {
     val blog_type = "livedoor"
 
-    def aggregate(data: NodeSeq): Set[Livedoor] = {
-        var set: Set[Livedoor] = Set.empty[Livedoor]
+    def aggregate(data: NodeSeq): Set[ArticleData] = {
+        var set: Set[ArticleData] = Set.empty[ArticleData]
 
         data.foreach { _s =>
             _s.label match {
@@ -24,7 +20,7 @@ object Livedoor extends AggregationTrait[Livedoor] {
                     val date = (_s \ "date").text
                     val update_date = Aggregation.convertToDate(date)
 
-                    set = set + Livedoor(title, link, update_date)
+                    set = set + ArticleData(title, link, update_date)
                 }
                 case _ =>
             }

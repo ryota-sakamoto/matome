@@ -3,7 +3,7 @@ package actors
 import javax.inject.Inject
 
 import akka.actor.Actor
-import models.aggregation.Livedoor
+import models.aggregation.{Hatena, Livedoor}
 import models.{Article, Blog}
 import play.Logger
 import play.api.libs.ws._
@@ -28,8 +28,9 @@ class AggregationActor @Inject()(ws_client: WSClient) extends Actor {
             Await.ready(response, Duration.Inf)
             response.value.get match {
                 case Success(s) => {
-                    val article_data = "livedoor" match { // TODO
+                    val article_data = "hatena" match { // TODO
                         case Livedoor.blog_type => Livedoor.aggregate(s)
+                        case Hatena.blog_type => Hatena.aggregate(s)
                         case _ => {
                             Logger.error("Not Found Blog Type")
                             Seq.empty

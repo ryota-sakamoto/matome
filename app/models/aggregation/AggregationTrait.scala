@@ -1,9 +1,13 @@
 package models.aggregation
 
+import java.util.Date
+
 import scala.xml.NodeSeq
 
-trait AggregationTrait[T] {
+case class ArticleData(title: String, link: String, update_date: Date)
+
+trait AggregationTrait {
     val blog_type: String
 
-    def aggregate(data: NodeSeq): Set[T]
+    def aggregate(data: NodeSeq): Set[ArticleData]
 }
