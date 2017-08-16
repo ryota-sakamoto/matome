@@ -25,14 +25,14 @@ object Blog extends Model[Blog] {
         }
     }
 
-    override def find(offset: Int = 0, limit: Int = 10): Seq[Blog] = {
+    def find(user_id: Int): Seq[Blog] = {
         val s = DB.withConnection { implicit c =>
             SQL("""
                 select blog.id, blog.name, blog.url, blog_type.type as blog_type, blog.update_date from blog
                 inner join blog_type on blog_type.id = blog.blog_type_id
+                where blog.user_id = {user_id}
                 order by update_date desc
-                limit {limit} offset {offset}
-                """).on("limit" -> limit, "offset" -> offset).as(mapper *)
+                """).on("user_id" -> user_id).as(mapper *)
         }
         s.sortWith { _.name < _.name }
     }
