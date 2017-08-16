@@ -30,7 +30,6 @@ object Article extends Model[Article] {
         override def writes(article: Article) = {
             Json.toJson(
                 Map(
-                    "id" -> Json.toJson(article.id),
                     "title" -> Json.toJson(article.title),
                     "url" -> Json.toJson(article.url),
                     "update_date" -> Json.toJson(article.update_date)
