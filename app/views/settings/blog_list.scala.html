@@ -15,37 +15,27 @@
             <div class="col-sm-1"></div>
             <div class="col-sm-10">
                 <form action="" method="post">
-                    <fieldset class="form-group" id="url-list">
-                        @for(i <- blog_list.indices) {
-                            <div class="input-group">
-                                <span class="input-group-btn">
-                                    <button class="btn btn-danger" type="button" id="minus-button">-</button>
-                                </span>
-                                <input type="text" class="form-control" name="name[@i]" value="@blog_list(i).name" placeholder="Blog name" disabled>
-                                <input type="text" class="form-control" name="url[@i]" value="@blog_list(i).url" placeholder="URL">
-                            </div>
+                    <table class="table table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th>name</th>
+                                <th>last_update date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="blog_list">
+                        @for(i <- blog_list.indices){
+                            <tr href="@routes.SettingController.blogEdit(blog_list(i).id)" onclick="edit_blog(this)">
+                                <td>@blog_list(i).name</td>
+                                <td>@("%tY-%<tm-%<td %<tH:%<tM:%<tS".format(blog_list(i).update_date))</td>
+                            </tr>
                         }
-                    </fieldset>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                    <button type="button" class="btn btn-info" id="plus-button">+</button>
+                        </tbody>
+                    </table>
+                    <button type="button" class="btn btn-info" id="new-button">New</button>
                     <button type="button" class="btn btn-secondary" id="aggregate">Aggregate</button>
                     <script>
-                        let n = @blog_list.length;
-                        const input_form = (n) => {
-                            return `<div class="input-group">
-                                <span class="input-group-btn">
-                                    <button class="btn btn-danger" type="button" id="minus-button">-</button>
-                                </span>
-                                <input type="text" class="form-control" name="name[${n}]" placeholder="Blog name" disabled>
-                                <input type="text" class="form-control" name="url[${n}]" placeholder="URL">
-                            </div>`;
-                        };
-                        $(document).on("click", "#plus-button", () => {
+                        $(document).on("click", "#new-button", () => {
                             $("#url-list").append(input_form(n++));
-                        });
-                        $(document).on("click", "#minus-button", (v) => {
-                            n--;
-                            $(v.currentTarget.parentNode.parentNode).remove();
                         });
                         $("#aggregate").on("click", () => {
                             $.ajax({
@@ -55,12 +45,10 @@
                                 alert("success")
                             })
                         });
-                    </script>
-                    <style>
-                        .input-group {
-                            margin-bottom: 10px;
+                        const edit_blog = (obj) => {
+                            location.href = obj.getAttribute("href");
                         }
-                    </style>
+                    </script>
                 </form>
             </div>
         </div>

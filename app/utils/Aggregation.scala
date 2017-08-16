@@ -3,23 +3,21 @@ package utils
 import java.text.SimpleDateFormat
 import java.util.{Date, Locale}
 
-import play.api.Logger
+import models.Blog
+import models.aggregation._
 
 object Aggregation {
     val prefix = "[Aggregation]"
 
-    val lineblog = "lineblog.me"
-    val hateblo = "hateblo.jp"
-
     val en_format = """\w{3}, \d{2} \w{3} \d{4} \d{2}:\d{2}:\d{2} \+\d{4}""".r
     val jp_format = """\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+09:00""".r
 
-    def getRSSUrl(url: String): String = { // TODO
-        url + (if (url.contains(lineblog)) {
-            "/index.rdf"
-        } else if (url.contains(hateblo)) {
-            "/rss"
-        })
+    def getRSSUrl(blog: Blog): String = {
+        blog.url + blog.blog_type match {
+            case Livedoor.blog_type => "/index.rdf"
+            case Hatena.blog_type => "/rss"
+            case _ => ""
+        }
     }
 
     def checkEmoticon(c: Char): Boolean = {

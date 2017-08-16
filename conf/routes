@@ -1,7 +1,8 @@
 GET     /                           controllers.HomeController.index
 GET     /settings                   controllers.SettingController.index
 GET     /settings/blogs             controllers.SettingController.blogList
-POST    /settings/blogs             controllers.SettingController.updateBlogList
+GET     /settings/blogs/:id         controllers.SettingController.blogEdit(id: String)
+POST    /settings/blogs/:id         controllers.SettingController.blogUpdate(id: String)
 GET     /login                      controllers.LoginController.index
 POST    /login                      controllers.LoginController.login
 GET     /logout                     controllers.LoginController.logout

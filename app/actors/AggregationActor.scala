@@ -18,7 +18,7 @@ class AggregationActor @Inject()(ws_client: WSClient) extends Actor {
     def receive = {
         case blog: Blog => {
             implicit val context = play.api.libs.concurrent.Execution.Implicits.defaultContext
-            val url = Aggregation.getRSSUrl(blog.url)
+            val url = Aggregation.getRSSUrl(blog)
             val ws = ws_client.url(url)
             Logger.debug(s"$prefix receive aggregation: $url")
 
@@ -49,7 +49,7 @@ class AggregationActor @Inject()(ws_client: WSClient) extends Actor {
                         }
                     }
 
-                    Blog.update(Blog(blog.id, name, blog.url, last_update_date))
+                    Blog.update(blog.id, last_update_date)
                 }
                 case Failure(e) => {
                     Logger.error(s"$prefix $e")

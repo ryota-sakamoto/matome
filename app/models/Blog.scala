@@ -8,26 +8,43 @@ import play.api.db.DB
 import play.api.Play.current
 import play.api.libs.json.{Json, Writes}
 
-case class Blog(id: Int, name: String, url: String, update_date: Date)
+case class Blog(id: String, name: String, url: String, blog_type: String, update_date: Date)
 
 object Blog extends Model[Blog] {
-    val parser = int("id") ~ str("name") ~ str("url") ~ date("update_date")
+    val parser = str("id") ~ str("name") ~ str("url") ~ str("blog_type") ~ date("update_date")
     val mapper = parser.map {
-        case id ~ name ~ url ~ update_date => Blog(id, name, url, update_date)
+        case id ~ name ~ url ~ blog_type ~ update_date => Blog(id, name, url, blog_type, update_date)
     }
 
-    def update(blog: Blog) = {
+    def update(id: String, update_date: Date) = {
         DB.withConnection { implicit c =>
             SQL(
                 """
-                   update %s blog set name = {name}, url = {url}, update_date = {update_date} where id = {id}
-                """.format(db_name)).on("id" -> blog.id, "name" -> blog.name, "url" -> blog.url, "update_date" -> blog.update_date).executeUpdate()
+                   update %s blog set update_date = {update_date} where id = {id}
+                """.format(db_name)).on("id" -> id, "update_date" -> update_date).executeUpdate()
         }
     }
 
     override def find(offset: Int = 0, limit: Int = 10): Seq[Blog] = {
-        val s = super.find(offset, limit)
-        s.sortWith { _.id < _.id }
+        val s = DB.withConnection { implicit c =>
+            SQL("""
+                select blog.id, blog.name, blog.url, blog_type.type as blog_type, blog.update_date from blog
+                inner join blog_type on blog_type.id = blog.blog_type_id
+                order by update_date desc
+                limit {limit} offset {offset}
+                """).on("limit" -> limit, "offset" -> offset).as(mapper *)
+        }
+        s.sortWith { _.name < _.name }
+    }
+
+    def findById(id: String, user_id: Int): Option[Blog] = {
+        DB.withConnection { implicit c =>
+            SQL("""
+                select blog.id, blog.name, blog.url, blog_type.type as blog_type, blog.update_date from blog
+                inner join blog_type on blog_type.id = blog.blog_type_id
+                where blog.id = {id} and blog.user_id = {user_id}
+                """).on("id" -> id, "user_id" -> user_id).as(mapper.singleOpt)
+        }
     }
 
     implicit object BlogWriter extends Writes[Blog] {

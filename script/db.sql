@@ -1,17 +1,24 @@
 create database matome;
 
 create table blog (
-	id int AUTO_INCREMENT,
+	id char(32) not null,
 	user_id int not null,
+	blog_type_id int not null,
 	name char(30),
 	url varchar(100),
 	update_date datetime,
 	primary key(id)
 );
 
+create table blog_type (
+	id int AUTO_INCREMENT,
+	type char(255),
+	primary key(id)
+);
+
 create table article (
 	id int AUTO_INCREMENT,
-	blog_id int,
+	blog_id char(32) not null,
 	title char(255),
 	url char(100),
 	update_date datetime,

@@ -8,10 +8,10 @@ import play.api.db.DB
 import play.api.Play.current
 import play.api.libs.json.{Json, Writes}
 
-case class Article(id: Int, blog_id: Int, title: String, url: String, update_date: Date)
+case class Article(id: Int, blog_id: String, title: String, url: String, update_date: Date)
 
 object Article extends Model[Article] {
-    val parser = int("id") ~ int("blog_id") ~ str("title") ~ str("url") ~ date("update_date")
+    val parser = int("id") ~ str("blog_id") ~ str("title") ~ str("url") ~ date("update_date")
     val mapper = parser.map {
         case id ~ blog_id ~ title ~ url ~ update_date => Article(id, blog_id, title, url, update_date)
     }
