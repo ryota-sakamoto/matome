@@ -13,11 +13,11 @@ object Aggregation {
     val jp_format = """\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+09:00""".r
 
     def getRSSUrl(blog: Blog): String = {
-        blog.url + blog.blog_type match {
+        blog.url + (blog.blog_type match {
             case Livedoor.blog_type => "/index.rdf"
             case Hatena.blog_type => "/rss"
             case _ => ""
-        }
+        })
     }
 
     def checkEmoticon(c: Char): Boolean = {

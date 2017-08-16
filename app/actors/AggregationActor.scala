@@ -28,7 +28,7 @@ class AggregationActor @Inject()(ws_client: WSClient) extends Actor {
             Await.ready(response, Duration.Inf)
             response.value.get match {
                 case Success(s) => {
-                    val article_data = "hatena" match { // TODO
+                    val article_data = blog.blog_type match {
                         case Livedoor.blog_type => Livedoor.aggregate(s)
                         case Hatena.blog_type => Hatena.aggregate(s)
                         case _ => {

@@ -16,10 +16,7 @@ class SettingController @Inject()(cache: CacheApi) extends Controller {
 
     def blogList = AuthAction( cache,
         Action { implicit request =>
-            val user_uuid = request.session.get("user_uuid") match {
-                case Some(uuid) => uuid.toString
-                case None => ""
-            }
+            val user_uuid = Security.getSessionUUID(request)
 
             val b = Blog.find()
             Ok(views.html.settings.blog_list(cache, user_uuid, b))
