@@ -11,10 +11,8 @@ import play.cache.CacheApi
 class HomeController @Inject()(cache: CacheApi) extends Controller {
 
     def index = Action { implicit request =>
-        val r = Article.find()
-
         val user_uuid = Security.getSessionUUID(request)
 
-        Ok(views.html.home.index(cache, user_uuid, r))
+        Ok(views.html.home.index(cache, user_uuid))
     }
 }
