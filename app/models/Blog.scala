@@ -16,12 +16,22 @@ object Blog extends Model[Blog] {
         case id ~ name ~ url ~ blog_type ~ update_date => Blog(id, name, url, blog_type, update_date)
     }
 
-    def update(id: String, update_date: Date) = {
+    // TODO fix
+    def update(id: String, name: String) = {
+        DB.withConnection { implicit c =>
+            SQL(
+                """
+                   update %s blog set name = {name} where id = {id}
+                """.format(db_name)).on("id" -> id, "name" -> name).executeUpdate()
+        }
+    }
+
+    def update(id: String, name: String, update_date: Date) = {
         DB.withConnection { implicit c =>
             SQL(
                 """
                    update %s blog set update_date = {update_date} where id = {id}
-                """.format(db_name)).on("id" -> id, "update_date" -> update_date).executeUpdate()
+                """.format(db_name)).on("id" -> id, "name" -> name, "update_date" -> update_date).executeUpdate()
         }
     }
 

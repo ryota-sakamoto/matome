@@ -7,9 +7,11 @@ import play.api.mvc._
 import models.Blog
 import play.cache.CacheApi
 import utils.{Security, UserCache}
+import forms.BlogEditForm
+import play.api.i18n.{I18nSupport, MessagesApi}
 
 @Singleton
-class SettingController @Inject()(cache: CacheApi) extends Controller {
+class SettingController @Inject()(cache: CacheApi, val messagesApi: MessagesApi) extends Controller with I18nSupport {
     def index = Action {
       Ok(views.html.settings.index())
     }
@@ -30,15 +32,18 @@ class SettingController @Inject()(cache: CacheApi) extends Controller {
 
             val blog = Blog.findById(id, user.get.id)
             blog match {
-                case Some(b) => Ok(b.toString)
+                case Some(b) => Ok(views.html.settings.edit(cache, user_uuid, b, BlogEditForm.form))
                 case None => NotFound("Not Found")
             }
         }
     )
 
-    // TODO use form and refactoring
     def blogUpdate(id: String) = AuthAction( cache,
         Action { implicit request =>
+            val f = BlogEditForm.form.bindFromRequest
+
+            Blog.update(id, f.get.name)
+
             Redirect(routes.SettingController.blogList())
         }
     )

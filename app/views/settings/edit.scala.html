@@ -1,0 +1,40 @@
+@import template._
+@import play.cache.CacheApi
+@import b4.vertical.fieldConstructor
+@import forms.BlogEdit
+
+@(cache: CacheApi, user_uuid: String, blog: Blog, form: Form[BlogEdit])(implicit messages:Messages)
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        @script()
+        <title>Settings</title>
+    </head>
+    <body>
+        @header(cache, user_uuid, "settings")
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-10">
+                <div class="card col-sm-6">
+                    <div class="card-block">
+                        @b4.form(routes.SettingController.blogUpdate(blog.id)) {
+                            <div class="form-group">
+                                <label>Name</label>
+                                @b4.text(form("name"), 'placeholder -> "Name", 'value -> blog.name)
+                            </div>
+                            <div class="form-group">
+                                <label >URL</label>
+                                @b4.url(form("url"), 'placeholder -> "URL", 'value -> blog.url)
+                            </div>
+                            <button type="submit" class="btn btn-primary" value="save">Save</button>
+                            <button type="submit" class="btn btn-danger" value="delete">Delete</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </body>
+</html>
