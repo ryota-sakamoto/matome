@@ -35,7 +35,7 @@
                     <button type="button" class="btn btn-secondary" id="aggregate">Aggregate</button>
                     <script>
                         $(document).on("click", "#new-button", () => {
-                            $("#url-list").append(input_form(n++));
+                            location.href = "@routes.SettingController.blogCreate()"
                         });
                         $("#aggregate").on("click", () => {
                             $.ajax({

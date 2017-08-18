@@ -19,17 +19,31 @@
             <div class="col-sm-10">
                 <div class="card col-sm-6">
                     <div class="card-block">
-                        @b4.form(routes.SettingController.blogUpdate(blog.id)) {
-                            <div class="form-group">
-                                <label>Name</label>
-                                @b4.text(form("name"), 'placeholder -> "Name", 'value -> blog.name)
-                            </div>
-                            <div class="form-group">
-                                <label >URL</label>
-                                @b4.url(form("url"), 'placeholder -> "URL", 'value -> blog.url)
-                            </div>
-                            <button type="submit" class="btn btn-primary" value="save">Save</button>
-                            <button type="submit" class="btn btn-danger" value="delete">Delete</button>
+                        @if(blog == null){
+                            @b4.form(routes.SettingController.blogInsert()) {
+                                <div class="form-group">
+                                    <label>Name</label>
+                                    @b4.text(form("name"), 'placeholder -> "Name")
+                                </div>
+                                <div class="form-group">
+                                    <label >URL</label>
+                                    @b4.url(form("url"), 'placeholder -> "URL")
+                                </div>
+                                <button type="submit" class="btn btn-primary" value="save">Save</button>
+                            }
+                        }else{
+                            @b4.form(routes.SettingController.blogUpdate(blog.id)) {
+                                <div class="form-group">
+                                    <label>Name</label>
+                                    @b4.text(form("name"), 'placeholder -> "Name", 'value -> blog.name)
+                                </div>
+                                <div class="form-group">
+                                    <label >URL</label>
+                                    @b4.url(form("url"), 'placeholder -> "URL", 'value -> blog.url)
+                                </div>
+                                <button type="submit" class="btn btn-primary" value="save">Save</button>
+                                <button type="submit" class="btn btn-danger" value="delete">Delete</button>
+                            }
                         }
                     </div>
                 </div>

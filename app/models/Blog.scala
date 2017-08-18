@@ -16,6 +16,15 @@ object Blog extends Model[Blog] {
         case id ~ name ~ url ~ blog_type ~ update_date => Blog(id, name, url, blog_type, update_date)
     }
 
+    def insert(id: String, user_id: Int, blog_type_id: Int, name: String, url: String, update_date: Date) = {
+        DB.withConnection { implicit c =>
+            SQL(
+                """
+                   insert into %s value ({id}, {user_id}, {blog_type_id}, {name}, {url}, {update_date})
+                """.format(db_name)).on("id" -> id, "user_id" -> user_id, "blog_type_id" -> blog_type_id, "name" -> name, "url" -> url, "update_date" -> update_date).executeUpdate()
+        }
+    }
+
     // TODO fix
     def update(id: String, name: String) = {
         DB.withConnection { implicit c =>

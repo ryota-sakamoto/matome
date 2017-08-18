@@ -1,5 +1,6 @@
 package controllers
 
+import java.util.Date
 import javax.inject._
 
 import actions.AuthAction
@@ -24,6 +25,27 @@ class SettingController @Inject()(cache: CacheApi, val messagesApi: MessagesApi)
             val b = Blog.find(user.get.id)
             Ok(views.html.settings.blog_list(cache, user_uuid, b))
         })
+
+    def blogCreate = AuthAction( cache,
+        Action { implicit request =>
+            val user_uuid = Security.getSessionUUID(request)
+
+            Ok(views.html.settings.edit(cache, user_uuid, null, BlogEditForm.form))
+        }
+    )
+
+    // TODO
+    def blogInsert = AuthAction( cache,
+        Action { implicit request =>
+            val f = BlogEditForm.form.bindFromRequest
+            val user_uuid = Security.getSessionUUID(request)
+            val user = UserCache.get(cache, user_uuid)
+
+            Blog.insert(Security.generateUUID(), user.get.id, 1, f.data("name"), f.data("url"), new Date(0))
+
+            Redirect(routes.SettingController.blogList())
+        }
+    )
 
     def blogEdit(id: String) = AuthAction( cache,
         Action { implicit request =>
