@@ -33,22 +33,21 @@ object Blog extends Model[Blog] {
         }
     }
 
-    // TODO fix
-    def update(id: String, name: String) = {
+    def update(id: String, blog_type_id: Int, name: String, url: String) = {
         DB.withConnection { implicit c =>
             SQL(
                 """
-                   update %s blog set name = {name} where id = {id}
-                """.format(db_name)).on("id" -> id, "name" -> name).executeUpdate()
+                   update %s blog set name = {name}, url = {url}, blog_type_id = {blog_type_id} where id = {id}
+                """.format(db_name)).on("id" -> id, "name" -> name, "url" -> url, "blog_type_id" -> blog_type_id).executeUpdate()
         }
     }
 
-    def update(id: String, name: String, update_date: Date) = {
+    def update(id: String, update_date: Date) = {
         DB.withConnection { implicit c =>
             SQL(
                 """
                    update %s blog set update_date = {update_date} where id = {id}
-                """.format(db_name)).on("id" -> id, "name" -> name, "update_date" -> update_date).executeUpdate()
+                """.format(db_name)).on("id" -> id, "update_date" -> update_date).executeUpdate()
         }
     }
 

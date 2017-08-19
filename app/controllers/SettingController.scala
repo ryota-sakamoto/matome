@@ -5,7 +5,7 @@ import javax.inject._
 
 import actions.AuthAction
 import play.api.mvc._
-import models.Blog
+import models.{Blog, BlogType}
 import play.cache.CacheApi
 import utils.{Security, UserCache}
 import forms.BlogEditForm
@@ -29,12 +29,12 @@ class SettingController @Inject()(cache: CacheApi, val messagesApi: MessagesApi)
     def blogCreate = AuthAction( cache,
         Action { implicit request =>
             val user_uuid = Security.getSessionUUID(request)
+            val blog_type_list = BlogType.list
 
-            Ok(views.html.settings.edit(cache, user_uuid, null, BlogEditForm.form))
+            Ok(views.html.settings.edit(cache, user_uuid, null, blog_type_list, BlogEditForm.form))
         }
     )
 
-    // TODO
     def blogInsert = AuthAction( cache,
         Action { implicit request =>
             val f = BlogEditForm.form.bindFromRequest
@@ -42,7 +42,7 @@ class SettingController @Inject()(cache: CacheApi, val messagesApi: MessagesApi)
             val user = UserCache.get(cache, user_uuid)
 
             val id = Security.generateUUID()
-            val blog = Blog(id, user.get.id, 1, f.data("name"), f.data("url"), new Date(0))
+            val blog = Blog(id, user.get.id, f.data("blog_type").toInt, f.data("name"), f.data("url"), new Date(0))
 
             Blog.insert(blog)
 
@@ -56,8 +56,9 @@ class SettingController @Inject()(cache: CacheApi, val messagesApi: MessagesApi)
             val user = UserCache.get(cache, user_uuid)
 
             val blog = Blog.findById(id, user.get.id)
+            val blog_type_list = BlogType.list
             blog match {
-                case Some(b) => Ok(views.html.settings.edit(cache, user_uuid, b, BlogEditForm.form))
+                case Some(b) => Ok(views.html.settings.edit(cache, user_uuid, b, blog_type_list, BlogEditForm.form))
                 case None => NotFound("Not Found")
             }
         }
@@ -67,7 +68,7 @@ class SettingController @Inject()(cache: CacheApi, val messagesApi: MessagesApi)
         Action { implicit request =>
             val f = BlogEditForm.form.bindFromRequest
 
-            Blog.update(id, f.get.name)
+            Blog.update(id, f.data("blog_type_id").toInt, f.data("name"), f.data("url"))
 
             Redirect(routes.SettingController.blogList())
         }

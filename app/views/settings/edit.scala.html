@@ -3,7 +3,7 @@
 @import b4.vertical.fieldConstructor
 @import forms.BlogEdit
 
-@(cache: CacheApi, user_uuid: String, blog: Blog, form: Form[BlogEdit])(implicit messages:Messages)
+@(cache: CacheApi, user_uuid: String, blog: Blog, blog_type: Seq[BlogType], form: Form[BlogEdit])(implicit messages:Messages)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -29,6 +29,10 @@
                                     <label >URL</label>
                                     @b4.url(form("url"), 'placeholder -> "URL")
                                 </div>
+                                <div class="form-group">
+                                    <label >Blog Type</label>
+                                    @b4.select(form("blog_type_id"), options = blog_type.map(b => b.id.toString -> b.name), '_default -> "Select Blog Type", 'required -> "required")
+                                </div>
                                 <button type="submit" class="btn btn-primary" value="save">Save</button>
                             }
                         }else{
@@ -40,6 +44,10 @@
                                 <div class="form-group">
                                     <label >URL</label>
                                     @b4.url(form("url"), 'placeholder -> "URL", 'value -> blog.url)
+                                </div>
+                                <div class="form-group">
+                                    <label >Blog Type</label>
+                                    @b4.select(form("blog_type_id"), options = blog_type.map(b => b.id.toString -> b.name), '_default -> "Select Blog Type", 'required -> "required", 'value -> blog.blog_type_id)
                                 </div>
                                 <button type="submit" class="btn btn-primary" value="save">Save</button>
                                 <button type="submit" class="btn btn-danger" value="delete">Delete</button>

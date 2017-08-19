@@ -48,7 +48,7 @@ class AggregationActor @Inject()(ws_client: WSClient) extends Actor {
                         }
                     }
 
-                    Blog.update(blog.id, blog.name, last_update_date)
+                    Blog.update(blog.id, last_update_date)
                 }
                 case Failure(e) => {
                     Logger.error(s"$prefix $e")
