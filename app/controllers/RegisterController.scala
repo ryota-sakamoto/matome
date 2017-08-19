@@ -16,7 +16,7 @@ class RegisterController @Inject()(cache: CacheApi)extends Controller {
         val system = ActorSystem("system")
         val actor = system.actorOf(Props[RegisterActor])
 
-        actor ! f.data
+        actor ! f.get
 
         Ok("Send Create User Request")
     }

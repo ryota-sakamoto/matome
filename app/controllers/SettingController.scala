@@ -42,7 +42,7 @@ class SettingController @Inject()(cache: CacheApi, val messagesApi: MessagesApi)
             val user = UserCache.get(cache, user_uuid)
 
             val id = Security.generateUUID()
-            val blog = Blog(id, user.get.id, f.data("blog_type").toInt, f.data("name"), f.data("url"), new Date(0))
+            val blog = Blog(id, user.get.id, f.get.blog_type_id, f.get.name, f.get.url, new Date(0))
 
             Blog.insert(blog)
 
@@ -68,7 +68,7 @@ class SettingController @Inject()(cache: CacheApi, val messagesApi: MessagesApi)
         Action { implicit request =>
             val f = BlogEditForm.form.bindFromRequest
 
-            Blog.update(id, f.data("blog_type_id").toInt, f.data("name"), f.data("url"))
+            Blog.update(id, f.get.blog_type_id, f.get.name, f.get.url)
 
             Redirect(routes.SettingController.blogList())
         }

@@ -21,7 +21,7 @@ class LoginController @Inject()(cache: CacheApi, val messagesApi: MessagesApi)ex
     def login = Action { implicit request =>
         val f = LoginForm.form.bindFromRequest
 
-        val user = User.login(f.data("name"), Security.md5(f.data("password")))
+        val user = User.login(f.get.name, Security.md5(f.get.password))
         user match {
             case Some(u) => {
                 Logger.info(s"$prefix Login success id: ${u.id}")
