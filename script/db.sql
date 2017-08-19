@@ -12,7 +12,7 @@ create table blog (
 
 create table blog_type (
 	id int AUTO_INCREMENT,
-	type char(255),
+	name char(255),
 	primary key(id)
 );
 

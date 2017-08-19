@@ -37,7 +37,6 @@ class AggregationActor @Inject()(ws_client: WSClient) extends Actor {
                         }
                     }
 
-                    var name = blog.name
                     var last_update_date = blog.update_date
 
                     article_data.foreach { data =>

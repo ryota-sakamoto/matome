@@ -41,7 +41,10 @@ class SettingController @Inject()(cache: CacheApi, val messagesApi: MessagesApi)
             val user_uuid = Security.getSessionUUID(request)
             val user = UserCache.get(cache, user_uuid)
 
-            Blog.insert(Security.generateUUID(), user.get.id, 1, f.data("name"), f.data("url"), new Date(0))
+            val id = Security.generateUUID()
+            val blog = Blog(id, user.get.id, 1, f.data("name"), f.data("url"), new Date(0))
+
+            Blog.insert(blog)
 
             Redirect(routes.SettingController.blogList())
         }

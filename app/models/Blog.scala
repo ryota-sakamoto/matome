@@ -8,20 +8,28 @@ import play.api.db.DB
 import play.api.Play.current
 import play.api.libs.json.{Json, Writes}
 
-case class Blog(id: String, name: String, url: String, blog_type: String, update_date: Date)
+case class Blog(id: String, user_id: Int, blog_type_id: Int,  name: String, url: String, update_date: Date) {
+    def blog_type: String = {
+        val blog_type = BlogType.findById(blog_type_id)
+        blog_type match {
+            case Some(b) => b.name
+            case None => ""
+        }
+    }
+}
 
 object Blog extends Model[Blog] {
-    val parser = str("id") ~ str("name") ~ str("url") ~ str("blog_type") ~ date("update_date")
+    val parser = str("id") ~ int("user_id") ~ int("blog_type_id") ~ str("name") ~ str("url") ~ date("update_date")
     val mapper = parser.map {
-        case id ~ name ~ url ~ blog_type ~ update_date => Blog(id, name, url, blog_type, update_date)
+        case id ~ user_id ~ blog_type_id ~ name ~ url ~ update_date => Blog(id, user_id, blog_type_id, name, url, update_date)
     }
 
-    def insert(id: String, user_id: Int, blog_type_id: Int, name: String, url: String, update_date: Date) = {
+    def insert(blog: Blog) = {
         DB.withConnection { implicit c =>
             SQL(
                 """
                    insert into %s value ({id}, {user_id}, {blog_type_id}, {name}, {url}, {update_date})
-                """.format(db_name)).on("id" -> id, "user_id" -> user_id, "blog_type_id" -> blog_type_id, "name" -> name, "url" -> url, "update_date" -> update_date).executeUpdate()
+                """.format(db_name)).on("id" -> blog.id, "user_id" -> blog.user_id, "blog_type_id" -> blog.blog_type_id, "name" -> blog.name, "url" -> blog.url, "update_date" -> blog.update_date).executeUpdate()
         }
     }
 
@@ -47,8 +55,7 @@ object Blog extends Model[Blog] {
     def find(user_id: Int): Seq[Blog] = {
         val s = DB.withConnection { implicit c =>
             SQL("""
-                select blog.id, blog.name, blog.url, blog_type.type as blog_type, blog.update_date from blog
-                inner join blog_type on blog_type.id = blog.blog_type_id
+                select * from blog
                 where blog.user_id = {user_id}
                 order by update_date desc
                 """).on("user_id" -> user_id).as(mapper *)
@@ -59,8 +66,7 @@ object Blog extends Model[Blog] {
     def findById(id: String, user_id: Int): Option[Blog] = {
         DB.withConnection { implicit c =>
             SQL("""
-                select blog.id, blog.name, blog.url, blog_type.type as blog_type, blog.update_date from blog
-                inner join blog_type on blog_type.id = blog.blog_type_id
+                select * from blog
                 where blog.id = {id} and blog.user_id = {user_id}
                 """).on("id" -> id, "user_id" -> user_id).as(mapper.singleOpt)
         }
