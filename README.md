@@ -12,7 +12,10 @@ $ scala -version // 2.11
 
 ## 使用方法
 ```
-$ activtor run
+$ docker build -t ryota-sakamoto/matome .
+$ docker run -itd -p 80:9000 --name matome ryota-sakamoto/matome
+$ docker exec -it matome bash
+$ activator
 ```
 
 ## 実装
