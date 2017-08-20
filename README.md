@@ -20,12 +20,12 @@ $ activator
 
 ## 実装
 - User機能
-- 処理をActorに移動
+- Actorのエラー処理
 - Modelの共通化(DIしたい)
 - スマホ対応 (別view用意？)
-- リファクタリング
 
 ## 急ぎではない
+- リファクタリング
 - 絵文字問題
 - API
 - UI周り (Bootstrap => MUI?)
