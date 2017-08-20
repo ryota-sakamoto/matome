@@ -6,19 +6,17 @@ import play.api.mvc._
 import akka.actor._
 import models.Blog
 import actors.AggregationActor
+import play.api.libs.mailer.MailerClient
 import play.api.libs.ws.WSClient
 
-class CronController @Inject()(ws: WSClient) extends Controller {
+class CronController @Inject()(system: ActorSystem, ws: WSClient, mailerClient: MailerClient) extends Controller {
 
     // TODO fix
     def aggregateArticle = Action {
-        val system = ActorSystem("system")
-        val actor = system.actorOf(Props(classOf[AggregationActor], ws))
+        val actor = system.actorOf(Props(classOf[AggregationActor], ws, mailerClient))
 
         val b = Blog.find()
-        b.foreach { blog =>
-            actor ! blog
-        }
+        actor ! b
 
         Ok("")
     }

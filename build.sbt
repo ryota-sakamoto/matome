@@ -15,6 +15,8 @@ libraryDependencies ++= Seq(
     ws,
     "mysql" % "mysql-connector-java" % "5.1.30",
     "com.typesafe.play" %% "anorm" % "2.5.1",
+    "com.typesafe.play" %% "play-mailer" % "6.0.1",
+    "com.typesafe.play" %% "play-mailer-guice" % "6.0.1",
     "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test,
     "com.adrianhurt" %% "play-bootstrap" % "1.2-P25-B4-RC2",
     "org.scalatest" %% "scalatest" % "3.0.1" % "test",

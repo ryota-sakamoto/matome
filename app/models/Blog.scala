@@ -16,6 +16,14 @@ case class Blog(id: String, user_id: Int, blog_type_id: Int,  name: String, url:
             case None => ""
         }
     }
+
+    def user_email: String = {
+        val user = User.findById(user_id)
+        user match {
+            case Some(u) => u.email
+            case None => ""
+        }
+    }
 }
 
 object Blog extends Model[Blog] {

@@ -5,12 +5,12 @@ import anorm.SqlParser._
 import play.api.db.DB
 import play.api.Play.current
 
-case class User(id:Int, name: String)
+case class User(id: Int, name: String, email: String)
 
 object User extends Model[User] {
-    val parser = int("id") ~ str("name")
+    val parser = int("id") ~ str("name") ~ str("email")
     val mapper = parser.map {
-        case id ~ name => User(id, name)
+        case id ~ name ~ email => User(id, name, email)
     }
     val not_formal = 0
     val formal = 1
