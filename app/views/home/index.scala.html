@@ -18,7 +18,7 @@
                 <table class="table table-hover table-striped">
                     <thead>
                         <tr>
-                            <th>name</th>
+                            <th>title</th>
                             <th>update date</th>
                         </tr>
                     </thead>
@@ -34,10 +34,11 @@
                             $.ajax({
                                 url: "@routes.ApiController.getArticle()",
                                 data: {
-                                    offset: offset
+                                    offset: offset,
+                                    limit: 10
                                 }
                             }).done((result) => {
-                                offset += 10
+                                offset += 10;
                                 const data = JSON.parse(result);
                                 create_article_table(data);
                             });

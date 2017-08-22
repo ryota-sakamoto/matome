@@ -5,26 +5,22 @@ import javax.inject._
 import models.Article
 import play.api.mvc._
 import play.api.libs.json.Json
-import utils.Validation
 
 @Singleton
 class ApiController @Inject() extends Controller {
     def getArticle = Action { implicit request =>
-        val offset = if (Validation.isNumber(request.getQueryString("offset"))){
-            request.getQueryString("offset").get.toInt
-        } else {
-            0
+        (for {
+            o <- request.getQueryString("offset")
+            l <- request.getQueryString("limit")
+        } yield (o.toInt, l.toInt) match {
+            case (offset, limit) => Article.find(offset, limit)
+            case _ => Article.find(0, 0)
+        }) match {
+            case Some(r) => {
+                val json = Json.toJson(r)
+                Ok(Json.stringify(json))
+            }
+            case None => BadRequest("bad request")
         }
-
-        val limit = if (Validation.isNumber(request.getQueryString("limit"))){
-            request.getQueryString("limit").get.toInt
-        } else {
-            10
-        }
-
-        val data = Article.find(offset, limit)
-
-        val json = Json.toJson(data)
-        Ok(Json.stringify(json))
     }
 }
