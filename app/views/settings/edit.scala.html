@@ -33,6 +33,10 @@
                                     <label >Blog Type</label>
                                     @b4.select(form("blog_type_id"), options = blog_type.map(b => b.id.toString -> b.name), '_default -> "Select Blog Type", 'required -> "required")
                                 </div>
+                                <div class="form-group">
+                                    <label >Notification</label>
+                                    @b4.checkbox(form("notification"))
+                                </div>
                                 <button type="submit" class="btn btn-primary" value="save">Save</button>
                             }
                         }else{
@@ -48,6 +52,10 @@
                                 <div class="form-group">
                                     <label >Blog Type</label>
                                     @b4.select(form("blog_type_id"), options = blog_type.map(b => b.id.toString -> b.name), '_default -> "Select Blog Type", 'required -> "required", 'value -> blog.blog_type_id)
+                                </div>
+                                <div class="form-group">
+                                    <label >Notification</label>
+                                    @b4.checkbox(form("notification"), 'checked -> blog.notification)
                                 </div>
                                 <button type="submit" class="btn btn-primary" value="save">Save</button>
                                 <button type="submit" class="btn btn-danger" value="delete">Delete</button>

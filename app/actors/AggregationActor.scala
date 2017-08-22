@@ -56,8 +56,11 @@ class AggregationActor @Inject()(ws_client: WSClient, mailerClient: MailerClient
 
                         if (last_update_date != blog.update_date) {
                             Blog.update(blog.id, last_update_date)
-                            val mail = this.context.actorOf(Props(classOf[MailActor], mailerClient))
-                            mail ! ("Blog update", blog.user_email, blog.name)
+
+                            if (blog.notification) {
+                                val mail = this.context.actorOf(Props(classOf[MailActor], mailerClient))
+                                mail ! ("Blog update", blog.user_email, blog.name)
+                            }
                         }
                     }
                     case Failure(e) => {

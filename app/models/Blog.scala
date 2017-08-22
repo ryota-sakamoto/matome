@@ -8,7 +8,7 @@ import play.api.db.DB
 import play.api.Play.current
 import play.api.libs.json.{Json, Writes}
 
-case class Blog(id: String, user_id: Int, blog_type_id: Int,  name: String, url: String, update_date: Date) {
+case class Blog(id: String, user_id: Int, blog_type_id: Int,  name: String, url: String, notification: Boolean, update_date: Date) {
     def blog_type: String = {
         val blog_type = BlogType.findById(blog_type_id)
         blog_type match {
@@ -27,26 +27,26 @@ case class Blog(id: String, user_id: Int, blog_type_id: Int,  name: String, url:
 }
 
 object Blog extends Model[Blog] {
-    val parser = str("id") ~ int("user_id") ~ int("blog_type_id") ~ str("name") ~ str("url") ~ date("update_date")
+    val parser = str("id") ~ int("user_id") ~ int("blog_type_id") ~ str("name") ~ str("url") ~ bool("notification") ~ date("update_date")
     val mapper = parser.map {
-        case id ~ user_id ~ blog_type_id ~ name ~ url ~ update_date => Blog(id, user_id, blog_type_id, name, url, update_date)
+        case id ~ user_id ~ blog_type_id ~ name ~ url ~ notification ~ update_date => Blog(id, user_id, blog_type_id, name, url, notification, update_date)
     }
 
     def insert(blog: Blog) = {
         DB.withConnection { implicit c =>
             SQL(
                 """
-                   insert into %s value ({id}, {user_id}, {blog_type_id}, {name}, {url}, {update_date})
-                """.format(db_name)).on("id" -> blog.id, "user_id" -> blog.user_id, "blog_type_id" -> blog.blog_type_id, "name" -> blog.name, "url" -> blog.url, "update_date" -> blog.update_date).executeUpdate()
+                   insert into %s value ({id}, {user_id}, {blog_type_id}, {name}, {url}, {notification}, {update_date})
+                """.format(db_name)).on("id" -> blog.id, "user_id" -> blog.user_id, "blog_type_id" -> blog.blog_type_id, "name" -> blog.name, "url" -> blog.url, "notification" -> blog.notification, "update_date" -> blog.update_date).executeUpdate()
         }
     }
 
-    def update(id: String, blog_type_id: Int, name: String, url: String) = {
+    def update(id: String, blog_type_id: Int, name: String, url: String, notification: Boolean) = {
         DB.withConnection { implicit c =>
             SQL(
                 """
-                   update %s blog set name = {name}, url = {url}, blog_type_id = {blog_type_id} where id = {id}
-                """.format(db_name)).on("id" -> id, "name" -> name, "url" -> url, "blog_type_id" -> blog_type_id).executeUpdate()
+                   update %s blog set name = {name}, url = {url}, blog_type_id = {blog_type_id}, notification = {notification} where id = {id}
+                """.format(db_name)).on("id" -> id, "name" -> name, "url" -> url, "blog_type_id" -> blog_type_id, "notification" -> notification).executeUpdate()
         }
     }
 
