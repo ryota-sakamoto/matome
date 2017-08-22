@@ -5,6 +5,11 @@ import play.api.libs.mailer._
 import akka.actor.Actor
 import play.api.Logger
 
+import scala.concurrent.{Await, Future}
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.Duration
+import scala.util.{Failure, Success}
+
 class MailActor(mailerClient: MailerClient) extends Actor {
     val prefix = "[MailActor]"
     def receive = {
@@ -15,8 +20,15 @@ class MailActor(mailerClient: MailerClient) extends Actor {
                 to = Seq(data._2),
                 bodyText = Option(data._3)
             )
-            mailerClient.send(email)
-            Logger.info(s"$prefix ${email.from} => ${email.to.mkString(",")}, subject: ${email.subject}, body: ${email.bodyText}")
+            val send_mail = Future {
+                mailerClient.send(email)
+            }
+
+            Await.ready(send_mail, Duration.Inf)
+            send_mail.value.get match {
+                case Success(s) => Logger.info(s"$prefix ${email.from} => ${email.to.mkString(",")}, subject: ${email.subject}, body: ${email.bodyText}")
+                case Failure(e) => Logger.error(s"$prefix $e")
+            }
             context.parent ! End()
         }
     }
