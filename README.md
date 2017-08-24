@@ -22,7 +22,6 @@ $ activator
 - User機能
 - Actorのエラー処理
 - Modelの共通化(DIしたい)
-- スマホ対応 (別view用意？)
 
 ## 急ぎではない
 - リファクタリング

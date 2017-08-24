@@ -2,7 +2,7 @@ package controllers
 
 import javax.inject._
 
-import models.Article
+import models.Blog
 import utils.Security
 import play.api.mvc._
 import play.cache.CacheApi
@@ -13,6 +13,8 @@ class HomeController @Inject()(cache: CacheApi) extends Controller {
     def index = Action { implicit request =>
         val user_uuid = Security.getSessionUUID(request)
 
-        Ok(views.html.home.index(cache, user_uuid))
+        val blog = Blog.find()
+
+        Ok(views.html.home.index(cache, user_uuid, blog))
     }
 }

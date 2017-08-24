@@ -1,7 +1,7 @@
 @import template._
 @import play.cache.CacheApi
 
-@(cache: CacheApi, user_uuid: String)
+@(cache: CacheApi, user_uuid: String, blogs: Seq[Blog])
 
 <!DOCTYPE html>
 <html lang="en">
@@ -15,22 +15,28 @@
         <div class="row" style="margin-bottom: 10px">
             <div class="col-sm-1"></div>
             <div class="col-sm-10">
-                <table class="table table-hover table-striped">
-                    <thead>
-                        <tr>
-                            <th>title</th>
-                            <th>update date</th>
-                        </tr>
-                    </thead>
-                    <tbody id="articles">
-                    </tbody>
-                </table>
+                <div class="row">
+                    @for(blog <- blogs) {
+                        <div class="col-sm-4" style="margin-bottom: 10px">
+                            <div class="card">
+                                <div class="card-block">
+                                    <h4 class="card-title">@blog.name</h4>
+                                    <div class="list-group articles">
+                                    </div>
+                                    <div class="d-flex justify-content-end" style="margin-top: 10px;">
+                                        <button type="button" class="btn btn-secondary more-button" id="@blog.id">See More</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
                 <div class="row">
                     <div class="col-sm-5"></div>
-                    <button type="button" class="btn btn-secondary" id="more">See More</button>
                     <script>
                         let offset = 0;
-                        $("#more").on("click", () => {
+                        $(".more-button").on("click", (e) => {
+                            const blog_id = e.target.id;
                             $.ajax({
                                 url: "@routes.ApiController.getArticle()",
                                 data: {
@@ -47,24 +53,19 @@
                         const create_article_table = (data) => {
                             for (let i = 0; i < data.length; i++) {
                                 const date = moment(new Date(data[i]["update_date"]));
-                                $("#articles").append(
-                                        `<tr href="${data[i]["url"]}" onclick="view_article(this)">
-                                            <td>${data[i]["title"]}</td>
-                                            <td>${date.format("YYYY-MM-DD HH:mm:ss")}</td>
-                                        </tr>`
+                                $(".articles").append(
+                                        `<a href="${data[i]["url"]}" class="list-group-item list-group-item-action">
+                                            <div class="d-flex w-100 justify-content-between">
+                                            <h6 class="mb-1">${data[i]["title"]}</h6>
+                                            </div>
+                                            <small class="text-muted">${date.format("YYYY-MM-DD HH:mm:ss")}</small>
+                                        </a>`
                                 );
                             }
                         };
-
-                        const view_article = (obj) => {
-                            location.href = obj.getAttribute("href");
-                        };
-
-                        $("#more").click();
                     </script>
                 </div>
             </div>
-            <div class="col-sm-1"></div>
         </div>
     </div>
     </body>
