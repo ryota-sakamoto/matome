@@ -15,6 +15,14 @@ object User extends Model[User] {
     val not_formal = 0
     val formal = 1
 
+    def findByName(name: String): Option[User] = {
+        DB.withConnection { implicit c =>
+            SQL("""
+                select * from user where name = {name}
+            """).on("name" -> name).as(mapper.singleOpt)
+        }
+    }
+
     def login(name: String, password: String): Option[User] = {
         DB.withConnection { implicit c =>
             SQL("""

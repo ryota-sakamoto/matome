@@ -1,0 +1,77 @@
+@import template._
+@import play.cache.CacheApi
+
+@(cache: CacheApi, user_uuid: String, blogs: Seq[Blog], user: User)
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        @script()
+    <title>@user.name</title>
+    </head>
+    <body>
+        @header(cache, user_uuid, user.name)
+    <div class="container-fluid">
+        <div class="row" style="margin-bottom: 10px">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-10">
+                <div class="row">
+                    @for(blog <- blogs) {
+                        <div class="col-sm-4" style="margin-bottom: 10px">
+                            <div class="card">
+                                <div class="card-block">
+                                    <h4 class="card-title">@blog.name</h4>
+                                    <div class="list-group articles">
+                                    </div>
+                                    <div class="d-flex justify-content-end" style="margin-top: 10px;">
+                                        <button type="button" class="btn btn-secondary more-button" id="@blog.id">See More</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="row">
+                    <div class="col-sm-5"></div>
+                    <script>
+                        let offset = [];
+                        $(".more-button").on("click", (e) => {
+                            const blog_id = e.target.id;
+                            if (offset[blog_id] === undefined) {
+                                offset[blog_id] = 0;
+                            } else {
+                                offset[blog_id] += 10;
+                            }
+                            $.ajax({
+                                // TODO
+                                url: `api/v1/blogs/${blog_id}/articles`,
+                                data: {
+                                    offset: offset[blog_id],
+                                    limit: 10
+                                }
+                            }).done((result) => {
+                                const dom_class = $(e.target).parent().parent().find(".articles");
+                                create_article_table(dom_class, result);
+                            });
+                        });
+
+                        const create_article_table = (dom_class, data) => {
+                            for (let i = 0; i < data.length; i++) {
+                                const date = moment(new Date(data[i]["update_date"]));
+                                dom_class.append(
+                                        `<a href="${data[i]["url"]}" class="list-group-item list-group-item-action">
+                                            <div class="d-flex w-100 justify-content-between">
+                                            <h6 class="mb-1">${data[i]["title"]}</h6>
+                                            </div>
+                                            <small class="text-muted">${date.format("YYYY-MM-DD HH:mm:ss")}</small>
+                                        </a>`
+                                );
+                            }
+                        };
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+    </body>
+</html>

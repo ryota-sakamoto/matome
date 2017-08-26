@@ -1,5 +1,4 @@
 GET     /                           controllers.HomeController.index
-GET     /settings                   controllers.SettingController.index
 GET     /settings/blogs             controllers.SettingController.blogList
 GET     /settings/blogs/new         controllers.SettingController.blogCreate
 POST    /settings/blogs/new         controllers.SettingController.blogInsert
