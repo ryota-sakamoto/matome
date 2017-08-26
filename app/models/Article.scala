@@ -16,6 +16,19 @@ object Article extends Model[Article] {
         case id ~ blog_id ~ title ~ url ~ update_date => Article(id, blog_id, title, url, update_date)
     }
 
+    def findByBlogId(blog_id: String, limit: Int, offset: Int): Seq[Article] = {
+        DB.withConnection { implicit c =>
+            SQL(
+                """
+                  select article.* from article
+                  inner join blog on blog.id = article.blog_id
+                  where blog_id = {blog_id}
+                  order by update_date desc
+                  limit {limit} offset {offset}
+                """).on("blog_id" -> blog_id, "limit" -> limit, "offset" -> offset).as(mapper *)
+        }
+    }
+
     // TODO fix and move Model
     def insert(article: Article) = {
         DB.withConnection { implicit c =>

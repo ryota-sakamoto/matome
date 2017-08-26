@@ -12,7 +12,7 @@ POST    /register                   controllers.RegisterController.register
 GET     /$id<[0-9a-zA-Z_]+>         controllers.UserController.show(id: String)
 GET     /$id<[0-9a-zA-Z_]+>/rss     controllers.UserController.rss(id: String)
 
-GET     /api/v1/articles            controllers.ApiController.getArticle
+GET     /api/v1/blogs/:id/articles  controllers.ApiController.getArticle(id: String)
 POST    /api/v1/aggregate           controllers.CronController.aggregateArticle
 
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
