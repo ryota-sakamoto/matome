@@ -5,6 +5,7 @@ import java.util.{Date, Locale}
 
 import models.Blog
 import models.aggregation._
+import play.api.Logger
 
 object Aggregation {
     val prefix = "[Aggregation]"
@@ -16,7 +17,11 @@ object Aggregation {
         blog.url + (blog.blog_type match {
             case Livedoor.blog_type => "/index.rdf"
             case Hatena.blog_type => "/rss"
-            case _ => ""
+            case Qiita.blog_type => "/feed.atom"
+            case _ => {
+                Logger.error("Not Found Blog Type")
+                ""
+            }
         })
     }
 

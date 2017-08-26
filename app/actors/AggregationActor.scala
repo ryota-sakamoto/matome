@@ -4,7 +4,7 @@ import javax.inject.Inject
 
 import actors.status.End
 import akka.actor.{Actor, PoisonPill, Props}
-import models.aggregation.{Hatena, Livedoor}
+import models.aggregation.{Hatena, Livedoor, Qiita}
 import models.{Article, Blog}
 import play.Logger
 import play.api.libs.mailer.MailerClient
@@ -37,6 +37,7 @@ class AggregationActor @Inject()(ws_client: WSClient, mailerClient: MailerClient
                         val article_data = blog.blog_type match {
                             case Livedoor.blog_type => Livedoor.aggregate(s)
                             case Hatena.blog_type => Hatena.aggregate(s)
+                            case Qiita.blog_type => Qiita.aggregate(s)
                             case _ => {
                                 Logger.error("Not Found Blog Type")
                                 Seq.empty
