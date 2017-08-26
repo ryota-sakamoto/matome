@@ -13,10 +13,6 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 
 @Singleton
 class SettingController @Inject()(cache: CacheApi, val messagesApi: MessagesApi) extends Controller with I18nSupport {
-    def index = Action {
-      Ok(views.html.settings.index())
-    }
-
     def blogList = AuthAction( cache,
         Action { implicit request =>
             val user_uuid = Security.getSessionUUID(request)
@@ -59,7 +55,7 @@ class SettingController @Inject()(cache: CacheApi, val messagesApi: MessagesApi)
             val blog_type_list = BlogType.list
             blog match {
                 case Some(b) => Ok(views.html.settings.edit(cache, user_uuid, b, blog_type_list, BlogEditForm.form))
-                case None => NotFound("Not Found")
+                case None => NotFound(views.html.template.notfound())
             }
         }
     )

@@ -1,7 +1,7 @@
 @import play.cache.CacheApi
 @(cache: CacheApi, user_uuid: String, active: String)
 
-@user = @{Option(cache.get(user_uuid))}
+@user = @{Option[User](cache.get(user_uuid))}
 
 <meta charset="utf-8">
 <header>
@@ -16,9 +16,12 @@
                     </li>
                     @user match {
 
-                        case Some(user) => {
+                        case Some(u) => {
+                            <li class="nav-item">
+                                <a class="nav-link" href="@routes.UserController.show(u.name)" id="@u.name">My Page</a>
+                            </li>
                             <li class="nav-item dropdown" id ="settings">
-                                <a class="nav-link dropdown-toggle" href="@routes.SettingController.index()" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Settings
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
