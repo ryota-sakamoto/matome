@@ -59,6 +59,14 @@ object Blog extends Model[Blog] {
         }
     }
 
+    def delete(id: String) = {
+        DB.withConnection { implicit c =>
+            SQL("""
+                delete from blog where id = {id}
+                """).on("id" -> id).executeUpdate()
+        }
+    }
+
     def find(user_id: Int): Seq[Blog] = {
         val s = DB.withConnection { implicit c =>
             SQL("""

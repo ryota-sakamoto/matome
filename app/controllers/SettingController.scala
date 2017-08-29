@@ -69,4 +69,15 @@ class SettingController @Inject()(cache: CacheApi, val messagesApi: MessagesApi)
             Redirect(routes.SettingController.blogList())
         }
     )
+
+    def blogDelete(id: String) = AuthAction( cache,
+        Action { implicit request =>
+            val result = Blog.delete(id)
+
+            result match {
+                case 1 => Ok("")
+                case _ => NotFound("")
+            }
+        }
+    )
 }

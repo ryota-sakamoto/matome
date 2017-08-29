@@ -57,8 +57,22 @@
                                     <label >Notification</label>
                                     @b4.checkbox(form("notification"), 'checked -> blog.notification)
                                 </div>
-                                <button type="submit" class="btn btn-primary" value="save">Save</button>
-                                <button type="submit" class="btn btn-danger" value="delete">Delete</button>
+                                <button type="submit" class="btn btn-primary" id="save-button">Save</button>
+                                <button type="submit" class="btn btn-danger" id="delete-button">Delete</button>
+                                <script>
+                                    $("#delete-button").on("click", (e) => {
+                                        e.preventDefault();
+
+                                        if (window.confirm("delete?")) {
+                                            $.ajax({
+                                                type: "delete",
+                                                url: "@routes.SettingController.blogDelete(blog.id)",
+                                            }).done(() => {
+                                                location.href = "@routes.SettingController.blogList()"
+                                            })
+                                        }
+                                    });
+                                </script>
                             }
                         }
                     </div>
