@@ -11,6 +11,46 @@
     </head>
     <body>
         @header(cache, user_uuid, "home")
-        <div class="container-fluid"></div>
+        <div class="container">
+            <div class="row" style="margin-bottom: 15px;">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-block">
+                            <h4>Matome</h4>
+                            <p class="card-text">
+                                This site is to aggregate blog.<br>
+                                Send mail when the blog is updated
+                            </p>
+                            <a href="@routes.LoginController.index()">Register or Login</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-7">
+                    <div class="card">
+                        <div class="card-block">
+                            <h4>Aggregation</h4>
+                            <ul class="list-group">
+                                <li class="list-group-item">Livedoor</li>
+                                <li class="list-group-item">Hatena</li>
+                                <li class="list-group-item">Qiita</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-5">
+                    <div class="card">
+                        <div class="card-block">
+                            <h4>Link</h4>
+                            <ul class="list-group">
+                                <a class="list-group-item" href="https://github.com/ryota-sakamoto/matome">Github</a>
+                                <a class="list-group-item" >Twitter</a>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </body>
 </html>
