@@ -10,4 +10,6 @@ trait AggregationTrait {
     val blog_type: String
 
     def aggregate(data: NodeSeq): Set[ArticleData]
+
+    def getRssURL(url: String): String
 }

@@ -24,4 +24,8 @@ object Qiita extends AggregationTrait {
         }
         set
     }
+
+    def getRssURL(url: String) = {
+        url + "/feed.atom"
+    }
 }

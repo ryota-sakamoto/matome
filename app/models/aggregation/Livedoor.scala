@@ -27,4 +27,8 @@ object Livedoor extends AggregationTrait {
         }
         set
     }
+
+    def getRssURL(url: String) = {
+        url + "/index.rdf"
+    }
 }

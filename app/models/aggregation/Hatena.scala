@@ -27,4 +27,8 @@ object Hatena extends AggregationTrait {
         }
         set
     }
+
+    def getRssURL(url: String) = {
+        url + "/rss"
+    }
 }

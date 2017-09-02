@@ -14,15 +14,16 @@ object Aggregation {
     val jp_format = """\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+09:00""".r
 
     def getRSSUrl(blog: Blog): String = {
-        blog.url + (blog.blog_type match {
-            case Livedoor.blog_type => "/index.rdf"
-            case Hatena.blog_type => "/rss"
-            case Qiita.blog_type => "/feed.atom"
+        blog.blog_type match {
+            case Livedoor.blog_type => Livedoor.getRssURL(blog.url)
+            case Hatena.blog_type => Hatena.getRssURL(blog.url)
+            case Qiita.blog_type => Qiita.getRssURL(blog.url)
+            case Ameblo.blog_type => Ameblo.getRssURL(blog.url)
             case _ => {
                 Logger.error("Not Found Blog Type")
                 ""
             }
-        })
+        }
     }
 
     def checkEmoticon(c: Char): Boolean = {
