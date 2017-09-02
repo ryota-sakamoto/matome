@@ -1,4 +1,6 @@
 GET     /                           controllers.HomeController.index
+GET     /search                     controllers.SearchController.index()
+GET     /search/result              controllers.SearchController.result()
 GET     /settings/blogs             controllers.SettingController.blogList
 GET     /settings/blogs/new         controllers.SettingController.blogCreate
 POST    /settings/blogs/new         controllers.SettingController.blogInsert

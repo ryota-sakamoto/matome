@@ -1,0 +1,35 @@
+@import template._
+@import play.cache.CacheApi
+@import models.elasticsearch.SearchResult
+
+@(cache: CacheApi, user_uuid: String, word: String, result: Array[SearchResult])
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        @script()
+    <title>Search</title>
+    </head>
+    <body>
+        @header(cache, user_uuid, "search")
+        <div class="container">
+            <div class="row" style="margin-bottom: 10px">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-block">
+                            <div class="card-title">Search Result: @word</div>
+                            @for(item <- result){
+                                <a href="@item.url" class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">@item.title</h6>
+                                    </div>
+                                    <small class="text-muted">@{"%tY/%<tm/%<td %<tR".format(item.update_date)}</small>
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

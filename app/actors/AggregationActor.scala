@@ -5,6 +5,7 @@ import javax.inject.Inject
 import actors.status.End
 import akka.actor.{Actor, PoisonPill, Props}
 import models.aggregation.{Ameblo, Hatena, Livedoor, Qiita}
+import models.elasticsearch.Elastic
 import models.{Article, Blog}
 import play.Logger
 import play.api.libs.mailer.MailerClient
@@ -49,7 +50,9 @@ class AggregationActor @Inject()(ws_client: WSClient, mailerClient: MailerClient
 
                         article_data.foreach { data =>
                             if (data.update_date.compareTo(blog.update_date) > 0) {
-                                Article.insert(Article(0, blog.id, data.title, data.link, data.update_date))
+                                val article = Article(0, blog.id, data.title, data.link, data.update_date)
+                                Article.insert(article)
+                                Elastic.insert(blog.name, article)
                                 if (data.update_date.compareTo(last_update_date) > 0) {
                                     last_update_date = data.update_date
                                 }

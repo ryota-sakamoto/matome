@@ -1,0 +1,32 @@
+@import template._
+@import play.cache.CacheApi
+@import forms.Search
+@import b4.vertical.fieldConstructor
+
+@(cache: CacheApi, user_uuid: String, form: Form[Search])(implicit messages:Messages)
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        @script()
+    <title>Search</title>
+    </head>
+    <body>
+        @header(cache, user_uuid, "search")
+        <div class="container">
+            <div class="row" style="margin-bottom: 10px">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-block">
+                            <h4 class="card-title">Article Search</h4>
+                            @b4.form(routes.SearchController.result()) {
+                                @b4.text(form("word"), 'placeholder -> "Input Word")
+                                <button type="submit" class="btn btn-primary">Search</button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
