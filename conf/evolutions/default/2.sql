@@ -4,7 +4,7 @@ create table blog_type (
 	name char(255),
 	primary key(id)
 );
-insert into blog_type values (1, "hatena") (2, "livedoor") (3, "qiita")
+insert into blog_type values (1, "hatena"), (2, "livedoor"), (3, "qiita"), (4, "ameblo")
 
 # --- !Downs
 DROP TABLE blog_type;

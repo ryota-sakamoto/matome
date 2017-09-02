@@ -14,7 +14,6 @@ ENV SCALA_HOME /usr/local/scala
 ENV PATH $PATH:$SCALA_HOME/bin
 ENV PATH $PATH:/usr/local/activator/bin
 
-RUN mkdir -p /var/www/matome
-ADD . /var/www/matome
-WORKDIR /var/www/matome
+RUN mkdir -p /var/www/html
+WORKDIR /var/www/html
 EXPOSE 9000
