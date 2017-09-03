@@ -24,7 +24,7 @@ case class AuthAction[A] (cache: CacheApi, action: Action[A]) extends Action[A] 
             }
             case None => {
                 Logger.info(s"$prefix auth failed")
-                Future(Redirect(routes.LoginController.index()).withSession(request.session - Security.session_name))
+                Future(Redirect(routes.LoginController.index()).withSession(request.session - Security.session_name).flashing("message" -> "Login Required"))
             }
         }
     }

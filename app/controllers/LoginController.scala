@@ -14,8 +14,9 @@ import utils.{Security, UserCache}
 class LoginController @Inject()(cache: CacheApi, val messagesApi: MessagesApi, user: UserImpl) extends Controller with I18nSupport {
     val prefix = "[LoginController]"
 
-    def index = Action {
-        Ok(views.html.login.index(cache, "", LoginForm.form, RegisterForm.form, null))
+    def index = Action { implicit request =>
+        val message = request.flash.get("message")
+        Ok(views.html.login.index(cache, "", LoginForm.form, RegisterForm.form, message))
     }
 
     def login = Action { implicit request =>
@@ -30,7 +31,7 @@ class LoginController @Inject()(cache: CacheApi, val messagesApi: MessagesApi, u
             }
             case None => {
                 Logger.info(s"$prefix Login Failed")
-                Ok(views.html.login.index(cache, "", LoginForm.form, RegisterForm.form, Option("Login failed")))
+                Redirect(routes.LoginController.index()).flashing("message" -> "Login failed")
             }
         }
     }
