@@ -24,7 +24,7 @@
                         </thead>
                         <tbody id="blog_list">
                         @for(i <- blog_list.indices){
-                            <tr href="@routes.SettingController.blogEdit(blog_list(i).id)" onclick="edit_blog(this)">
+                            <tr href="@routes.SettingBlogController.blogEdit(blog_list(i).id)" onclick="edit_blog(this)">
                                 <td>@blog_list(i).name</td>
                                 <td>@("%tY-%<tm-%<td %<tH:%<tM:%<tS".format(blog_list(i).update_date))</td>
                             </tr>
@@ -35,7 +35,7 @@
                     <button type="button" class="btn btn-secondary" id="aggregate">Aggregate</button>
                     <script>
                         $(document).on("click", "#new-button", () => {
-                            location.href = "@routes.SettingController.blogCreate()"
+                            location.href = "@routes.SettingBlogController.blogCreate()"
                         });
                         $("#aggregate").on("click", () => {
                             $.ajax({

@@ -20,7 +20,7 @@
                 <div class="card col-sm-6">
                     <div class="card-block">
                         @if(blog == null){
-                            @b4.form(routes.SettingController.blogInsert()) {
+                            @b4.form(routes.SettingBlogController.blogInsert()) {
                                 <div class="form-group">
                                     <label>Name</label>
                                     @b4.text(form("name"), 'placeholder -> "Name")
@@ -40,7 +40,7 @@
                                 <button type="submit" class="btn btn-primary" value="save">Save</button>
                             }
                         }else{
-                            @b4.form(routes.SettingController.blogUpdate(blog.id)) {
+                            @b4.form(routes.SettingBlogController.blogUpdate(blog.id)) {
                                 <div class="form-group">
                                     <label>Name</label>
                                     @b4.text(form("name"), 'placeholder -> "Name", 'value -> blog.name)
@@ -66,9 +66,9 @@
                                         if (window.confirm("delete?")) {
                                             $.ajax({
                                                 type: "delete",
-                                                url: "@routes.SettingController.blogDelete(blog.id)",
+                                                url: "@routes.SettingBlogController.blogDelete(blog.id)",
                                             }).done(() => {
-                                                location.href = "@routes.SettingController.blogList()"
+                                                location.href = "@routes.SettingBlogController.blogList()"
                                             })
                                         }
                                     });

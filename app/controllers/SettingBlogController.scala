@@ -12,7 +12,7 @@ import forms.BlogEditForm
 import play.api.i18n.{I18nSupport, MessagesApi}
 
 @Singleton
-class SettingController @Inject()(cache: CacheApi, val messagesApi: MessagesApi, blog: BlogImpl, blog_type: BlogTypeImpl) extends Controller with I18nSupport {
+class SettingBlogController @Inject()(cache: CacheApi, val messagesApi: MessagesApi, blog: BlogImpl, blog_type: BlogTypeImpl) extends Controller with I18nSupport {
     def blogList = AuthAction( cache,
         Action { implicit request =>
             val user_uuid = Security.getSessionUUID(request)
@@ -42,7 +42,7 @@ class SettingController @Inject()(cache: CacheApi, val messagesApi: MessagesApi,
 
             blog.insert(b)
 
-            Redirect(routes.SettingController.blogList())
+            Redirect(routes.SettingBlogController.blogList())
         }
     )
 
@@ -66,7 +66,7 @@ class SettingController @Inject()(cache: CacheApi, val messagesApi: MessagesApi,
 
             blog.update(id, f.get.blog_type_id, f.get.name, f.get.url, f.get.notification)
 
-            Redirect(routes.SettingController.blogList())
+            Redirect(routes.SettingBlogController.blogList())
         }
     )
 
