@@ -8,7 +8,7 @@ import play.api.db.Database
 
 case class BlogType(id: Int, name: String)
 
-class BlogTypeImpl @Inject()(db: Database) extends Model[BlogType] {
+class BlogTypeImpl @Inject()(db: Database) extends Model[BlogType](db) {
     override val db_name = "blog_type"
     val parser = int("id") ~ str("name")
     val mapper = parser.map {

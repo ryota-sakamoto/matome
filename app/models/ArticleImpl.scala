@@ -24,11 +24,12 @@ object Article {
     }
 }
 
-class ArticleImpl @Inject()(db: Database) extends Model[Article] {
+class ArticleImpl @Inject()(db: Database) extends Model[Article](db) {
     val parser = int("id") ~ str("blog_id") ~ str("title") ~ str("url") ~ date("update_date")
     val mapper = parser.map {
         case id ~ blog_id ~ title ~ url ~ update_date => Article(id, blog_id, title, url, update_date)
     }
+    val db_name = "article"
 
     def findByBlogId(blog_id: String, limit: Int, offset: Int): Seq[Article] = {
         db.withConnection { implicit c =>

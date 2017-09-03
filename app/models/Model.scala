@@ -1,18 +1,15 @@
 package models
 
 import anorm._
-import play.api.db.DB
-import play.api.Play.current
-import play.api.libs.json.{Json, Writes}
+import play.api.db.Database
 
-import scala.reflect.ClassTag
-
-trait Model[T] extends ModelClassTag[T]{
+abstract class Model[T](db: Database) {
     val parser: RowParser[Any]
     val mapper: RowParser[T]
+    val db_name: String
 
     def find(offset: Int = 0, limit: Int = 10): Seq[T] = {
-        DB.withConnection { implicit c =>
+        db.withConnection { implicit c =>
             SQL("""
                 select * from %s
                 order by update_date desc
@@ -22,14 +19,10 @@ trait Model[T] extends ModelClassTag[T]{
     }
 
     def findById(id: Int): Option[T] = {
-        DB.withConnection { implicit c =>
+        db.withConnection { implicit c =>
             SQL("""
                 select * from %s where id = {id}
                 """.format(db_name)).on("id" -> id).as(mapper.singleOpt)
         }
     }
-}
-
-class ModelClassTag[T](implicit class_tag: ClassTag[T]) {
-    val db_name: String = class_tag.toString.split('.')(1).toLowerCase
 }
