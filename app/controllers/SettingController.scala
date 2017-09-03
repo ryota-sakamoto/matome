@@ -5,20 +5,20 @@ import javax.inject._
 
 import actions.AuthAction
 import play.api.mvc._
-import models.{Blog, BlogType}
+import models.{Blog, BlogImpl, BlogType}
 import play.cache.CacheApi
 import utils.{Security, UserCache}
 import forms.BlogEditForm
 import play.api.i18n.{I18nSupport, MessagesApi}
 
 @Singleton
-class SettingController @Inject()(cache: CacheApi, val messagesApi: MessagesApi) extends Controller with I18nSupport {
+class SettingController @Inject()(cache: CacheApi, val messagesApi: MessagesApi, blog: BlogImpl) extends Controller with I18nSupport {
     def blogList = AuthAction( cache,
         Action { implicit request =>
             val user_uuid = Security.getSessionUUID(request)
             val user = UserCache.get(cache, user_uuid)
 
-            val b = Blog.find(user.get.id)
+            val b = blog.find(user.get.id)
             Ok(views.html.settings.blog_list(cache, user_uuid, b))
         })
 
@@ -38,9 +38,9 @@ class SettingController @Inject()(cache: CacheApi, val messagesApi: MessagesApi)
             val user = UserCache.get(cache, user_uuid)
 
             val id = Security.generateUUID()
-            val blog = Blog(id, user.get.id, f.get.blog_type_id, f.get.name, f.get.url, f.get.notification, new Date(0))
+            val b = Blog(id, user.get.id, f.get.blog_type_id, f.get.name, f.get.url, f.get.notification, new Date(0))
 
-            Blog.insert(blog)
+            blog.insert(b)
 
             Redirect(routes.SettingController.blogList())
         }
@@ -51,9 +51,9 @@ class SettingController @Inject()(cache: CacheApi, val messagesApi: MessagesApi)
             val user_uuid = Security.getSessionUUID(request)
             val user = UserCache.get(cache, user_uuid)
 
-            val blog = Blog.findById(id, user.get.id)
+            val b = blog.findById(id, user.get.id)
             val blog_type_list = BlogType.list
-            blog match {
+            b match {
                 case Some(b) => Ok(views.html.settings.edit(cache, user_uuid, b, blog_type_list, BlogEditForm.form))
                 case None => NotFound(views.html.template.notfound())
             }
@@ -64,7 +64,7 @@ class SettingController @Inject()(cache: CacheApi, val messagesApi: MessagesApi)
         Action { implicit request =>
             val f = BlogEditForm.form.bindFromRequest
 
-            Blog.update(id, f.get.blog_type_id, f.get.name, f.get.url, f.get.notification)
+            blog.update(id, f.get.blog_type_id, f.get.name, f.get.url, f.get.notification)
 
             Redirect(routes.SettingController.blogList())
         }
@@ -72,7 +72,7 @@ class SettingController @Inject()(cache: CacheApi, val messagesApi: MessagesApi)
 
     def blogDelete(id: String) = AuthAction( cache,
         Action { implicit request =>
-            val result = Blog.delete(id)
+            val result = blog.delete(id)
 
             result match {
                 case 1 => Ok("")

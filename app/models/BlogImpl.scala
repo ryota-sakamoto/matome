@@ -1,11 +1,11 @@
 package models
 
 import java.util.Date
+import javax.inject.Inject
 
 import anorm._
 import anorm.SqlParser._
-import play.api.db.DB
-import play.api.Play.current
+import play.api.db.Database
 import play.api.libs.json.{Json, Writes}
 
 case class Blog(id: String, user_id: Int, blog_type_id: Int,  name: String, url: String, notification: Boolean, update_date: Date) {
@@ -26,14 +26,14 @@ case class Blog(id: String, user_id: Int, blog_type_id: Int,  name: String, url:
     }
 }
 
-object Blog extends Model[Blog] {
+class BlogImpl @Inject()(db: Database) extends Model[Blog] {
     val parser = str("id") ~ int("user_id") ~ int("blog_type_id") ~ str("name") ~ str("url") ~ bool("notification") ~ date("update_date")
     val mapper = parser.map {
         case id ~ user_id ~ blog_type_id ~ name ~ url ~ notification ~ update_date => Blog(id, user_id, blog_type_id, name, url, notification, update_date)
     }
 
     def insert(blog: Blog) = {
-        DB.withConnection { implicit c =>
+        db.withConnection { implicit c =>
             SQL(
                 """
                    insert into %s value ({id}, {user_id}, {blog_type_id}, {name}, {url}, {notification}, {update_date})
@@ -42,7 +42,7 @@ object Blog extends Model[Blog] {
     }
 
     def update(id: String, blog_type_id: Int, name: String, url: String, notification: Boolean) = {
-        DB.withConnection { implicit c =>
+        db.withConnection { implicit c =>
             SQL(
                 """
                    update %s blog set name = {name}, url = {url}, blog_type_id = {blog_type_id}, notification = {notification} where id = {id}
@@ -51,7 +51,7 @@ object Blog extends Model[Blog] {
     }
 
     def update(id: String, update_date: Date) = {
-        DB.withConnection { implicit c =>
+        db.withConnection { implicit c =>
             SQL(
                 """
                    update %s blog set update_date = {update_date} where id = {id}
@@ -60,27 +60,32 @@ object Blog extends Model[Blog] {
     }
 
     def delete(id: String) = {
-        DB.withConnection { implicit c =>
-            SQL("""
+        db.withConnection { implicit c =>
+            SQL(
+                """
                 delete from blog where id = {id}
                 """).on("id" -> id).executeUpdate()
         }
     }
 
     def find(user_id: Int): Seq[Blog] = {
-        val s = DB.withConnection { implicit c =>
-            SQL("""
+        val s = db.withConnection { implicit c =>
+            SQL(
+                """
                 select * from blog
                 where blog.user_id = {user_id}
                 order by update_date desc
                 """).on("user_id" -> user_id).as(mapper *)
         }
-        s.sortWith { _.name < _.name }
+        s.sortWith {
+            _.name < _.name
+        }
     }
 
     def findById(id: String, user_id: Int): Option[Blog] = {
-        DB.withConnection { implicit c =>
-            SQL("""
+        db.withConnection { implicit c =>
+            SQL(
+                """
                 select * from blog
                 where blog.id = {id} and blog.user_id = {user_id}
                 """).on("id" -> id, "user_id" -> user_id).as(mapper.singleOpt)

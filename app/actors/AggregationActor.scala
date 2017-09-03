@@ -6,7 +6,7 @@ import actors.status.End
 import akka.actor.{Actor, PoisonPill, Props}
 import models.aggregation.{Ameblo, Hatena, Livedoor, Qiita}
 import models.elasticsearch.Elastic
-import models.{Article, Blog}
+import models.{Article, Blog, BlogImpl}
 import play.Logger
 import play.api.libs.mailer.MailerClient
 import play.api.libs.ws._
@@ -16,16 +16,16 @@ import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import scala.util.{Failure, Success}
 
-class AggregationActor @Inject()(ws_client: WSClient, mailerClient: MailerClient) extends Actor {
+class AggregationActor @Inject()(ws_client: WSClient, mailerClient: MailerClient, blog: BlogImpl) extends Actor {
     val prefix = "[AggregationActor]"
     var blog_count = 0
 
     def receive = {
         case blog_list: Seq[Blog] => {
             blog_count = blog_list.length
-            blog_list.foreach { blog =>
+            blog_list.foreach { blog_data =>
                 implicit val context = play.api.libs.concurrent.Execution.Implicits.defaultContext
-                val url = Aggregation.getRSSUrl(blog)
+                val url = Aggregation.getRSSUrl(blog_data)
                 val ws = ws_client.url(url)
                 Logger.debug(s"$prefix receive aggregation: $url")
 
@@ -35,7 +35,7 @@ class AggregationActor @Inject()(ws_client: WSClient, mailerClient: MailerClient
                 Await.ready(response, Duration.Inf)
                 response.value.get match {
                     case Success(s) => {
-                        val article_data = blog.blog_type match {
+                        val article_data = blog_data.blog_type match {
                             case Livedoor.blog_type => Livedoor.aggregate(s)
                             case Hatena.blog_type => Hatena.aggregate(s)
                             case Qiita.blog_type => Qiita.aggregate(s)
@@ -46,25 +46,25 @@ class AggregationActor @Inject()(ws_client: WSClient, mailerClient: MailerClient
                             }
                         }
 
-                        var last_update_date = blog.update_date
+                        var last_update_date = blog_data.update_date
 
                         article_data.foreach { data =>
-                            if (data.update_date.compareTo(blog.update_date) > 0) {
-                                val article = Article(0, blog.id, data.title, data.link, data.update_date)
+                            if (data.update_date.compareTo(blog_data.update_date) > 0) {
+                                val article = Article(0, blog_data.id, data.title, data.link, data.update_date)
                                 Article.insert(article)
-                                Elastic.insert(blog.name, article)
+                                Elastic.insert(blog_data.name, article)
                                 if (data.update_date.compareTo(last_update_date) > 0) {
                                     last_update_date = data.update_date
                                 }
                             }
                         }
 
-                        if (last_update_date != blog.update_date) {
-                            Blog.update(blog.id, last_update_date)
+                        if (last_update_date != blog_data.update_date) {
+                            blog.update(blog_data.id, last_update_date)
 
-                            if (blog.notification) {
+                            if (blog_data.notification) {
                                 val mail = this.context.actorOf(Props(classOf[MailActor], mailerClient))
-                                mail ! ("Blog update", blog.user_email, blog.name)
+                                mail ! ("Blog update", blog_data.user_email, blog_data.name)
                             }
                         }
                     }

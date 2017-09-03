@@ -2,21 +2,21 @@ package controllers
 
 import javax.inject._
 
-import models.{Blog, User}
+import models.{BlogImpl, User}
 import utils.Security
 import play.api.mvc._
 import play.cache.CacheApi
 
 @Singleton
-class UserController @Inject()(cache: CacheApi) extends Controller {
+class UserController @Inject()(cache: CacheApi, blog: BlogImpl) extends Controller {
     val prefix = "[UserController]"
     def show(id: String) = Action { implicit request =>
         val user = User.findByName(id)
         val user_uuid = Security.getSessionUUID(request)
         user match {
             case Some(u) => {
-                val blog = Blog.find(u.id)
-                Ok(views.html.user.index(cache, user_uuid, blog, u))
+                val b = blog.find(u.id)
+                Ok(views.html.user.index(cache, user_uuid, b, u))
             }
             case None => NotFound(views.html.template.notfound())
         }

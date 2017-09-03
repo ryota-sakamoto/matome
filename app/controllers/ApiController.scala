@@ -2,7 +2,7 @@ package controllers
 
 import javax.inject._
 
-import models.{Article, Blog}
+import models.Article
 import play.api.mvc._
 import play.api.libs.json.Json
 import utils.Validation
