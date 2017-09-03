@@ -5,14 +5,14 @@ import javax.inject._
 
 import actions.AuthAction
 import play.api.mvc._
-import models.{Blog, BlogImpl, BlogType}
+import models.{Blog, BlogImpl, BlogTypeImpl}
 import play.cache.CacheApi
 import utils.{Security, UserCache}
 import forms.BlogEditForm
 import play.api.i18n.{I18nSupport, MessagesApi}
 
 @Singleton
-class SettingController @Inject()(cache: CacheApi, val messagesApi: MessagesApi, blog: BlogImpl) extends Controller with I18nSupport {
+class SettingController @Inject()(cache: CacheApi, val messagesApi: MessagesApi, blog: BlogImpl, blog_type: BlogTypeImpl) extends Controller with I18nSupport {
     def blogList = AuthAction( cache,
         Action { implicit request =>
             val user_uuid = Security.getSessionUUID(request)
@@ -25,7 +25,7 @@ class SettingController @Inject()(cache: CacheApi, val messagesApi: MessagesApi,
     def blogCreate = AuthAction( cache,
         Action { implicit request =>
             val user_uuid = Security.getSessionUUID(request)
-            val blog_type_list = BlogType.list
+            val blog_type_list = blog_type.list
 
             Ok(views.html.settings.edit(cache, user_uuid, null, blog_type_list, BlogEditForm.form))
         }
@@ -52,7 +52,7 @@ class SettingController @Inject()(cache: CacheApi, val messagesApi: MessagesApi,
             val user = UserCache.get(cache, user_uuid)
 
             val b = blog.findById(id, user.get.id)
-            val blog_type_list = BlogType.list
+            val blog_type_list = blog_type.list
             b match {
                 case Some(b) => Ok(views.html.settings.edit(cache, user_uuid, b, blog_type_list, BlogEditForm.form))
                 case None => NotFound(views.html.template.notfound())

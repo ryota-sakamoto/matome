@@ -9,14 +9,6 @@ import play.api.db.Database
 import play.api.libs.json.{Json, Writes}
 
 case class Blog(id: String, user_id: Int, blog_type_id: Int,  name: String, url: String, notification: Boolean, update_date: Date) {
-    def blog_type: String = {
-        val blog_type = BlogType.findById(blog_type_id)
-        blog_type match {
-            case Some(b) => b.name
-            case None => ""
-        }
-    }
-
     def user_email: String = {
         val user = User.findById(user_id)
         user match {

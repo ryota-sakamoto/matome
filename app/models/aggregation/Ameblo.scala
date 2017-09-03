@@ -1,26 +1,31 @@
 package models.aggregation
+import play.api.libs.ws.WSClient
 import utils.Aggregation
-
-import scala.xml.NodeSeq
 
 object Ameblo extends AggregationTrait {
     val blog_type = "ameblo"
 
-    def aggregate(data: NodeSeq): Set[ArticleData] = {
-        var set = Set.empty[ArticleData]
+    def aggregate(url: String)(implicit ws_client: WSClient): Set[ArticleData] = {
+        val data = get(getRssURL(url))
+        var set: Set[ArticleData] = Set.empty[ArticleData]
 
-        data.foreach { item =>
-            item.label match {
-                case "item" => {
-                    val title = (item \ "title").text
-                    val link = (item \ "link").text
-                    val date = (item \ "date").text
-                    val update_date = Aggregation.convertToDate(date)
+        data match {
+            case Some(s) => {
+                s.foreach { item =>
+                    item.label match {
+                        case "item" => {
+                            val title = (item \ "title").text
+                            val link = (item \ "link").text
+                            val date = (item \ "date").text
+                            val update_date = Aggregation.convertToDate(date)
 
-                    set += ArticleData(title, link, update_date)
+                            set += ArticleData(title, link, update_date)
+                        }
+                        case _ =>
+                    }
                 }
-                case _ =>
             }
+            case None =>
         }
         set
     }
