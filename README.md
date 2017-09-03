@@ -5,10 +5,11 @@
 - Intellij IDEA 2017 Ultimate
 - CentOS7
 
-## 言語のバージョン
+## バージョン
 ```
 $ java -version // 1.8.0_77
-$ scala -version // 2.11
+$ scala -version // 2.12.3
+# elasticsearch --version // 5.4.3
 ```
 
 ## 使用方法
