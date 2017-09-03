@@ -8,15 +8,7 @@ import anorm.SqlParser._
 import play.api.db.Database
 import play.api.libs.json.{Json, Writes}
 
-case class Blog(id: String, user_id: Int, blog_type_id: Int,  name: String, url: String, notification: Boolean, update_date: Date) {
-    def user_email: String = {
-        val user = User.findById(user_id)
-        user match {
-            case Some(u) => u.email
-            case None => ""
-        }
-    }
-}
+case class Blog(id: String, user_id: Int, blog_type_id: Int,  name: String, url: String, notification: Boolean, update_date: Date)
 
 class BlogImpl @Inject()(db: Database) extends Model[Blog] {
     val parser = str("id") ~ int("user_id") ~ int("blog_type_id") ~ str("name") ~ str("url") ~ bool("notification") ~ date("update_date")

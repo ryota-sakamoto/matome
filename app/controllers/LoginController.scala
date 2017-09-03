@@ -7,11 +7,11 @@ import play.cache.CacheApi
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.Logger
 import forms.{LoginForm, RegisterForm}
-import models.User
+import models.UserImpl
 import utils.{Security, UserCache}
 
 @Singleton
-class LoginController @Inject()(cache: CacheApi, val messagesApi: MessagesApi)extends Controller with I18nSupport {
+class LoginController @Inject()(cache: CacheApi, val messagesApi: MessagesApi, user: UserImpl) extends Controller with I18nSupport {
     val prefix = "[LoginController]"
 
     def index = Action {
@@ -21,8 +21,8 @@ class LoginController @Inject()(cache: CacheApi, val messagesApi: MessagesApi)ex
     def login = Action { implicit request =>
         val f = LoginForm.form.bindFromRequest
 
-        val user = User.login(f.get.name, Security.md5(f.get.password))
-        user match {
+        val user_opt = user.login(f.get.name, Security.md5(f.get.password))
+        user_opt match {
             case Some(u) => {
                 Logger.info(s"$prefix Login success id: ${u.id}")
                 val uuid = UserCache.set(cache, u)

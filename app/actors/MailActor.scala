@@ -1,5 +1,7 @@
 package actors
 
+import javax.inject.Inject
+
 import actors.status.End
 import play.api.libs.mailer._
 import akka.actor.Actor
@@ -10,7 +12,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 import scala.util.{Failure, Success}
 
-class MailActor(mailerClient: MailerClient) extends Actor {
+class MailActor @Inject()(mailerClient: MailerClient) extends Actor {
     val prefix = "[MailActor]"
     def receive = {
         case data: (String, String, String) => {

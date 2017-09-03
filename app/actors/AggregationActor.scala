@@ -6,12 +6,12 @@ import actors.status.End
 import akka.actor.{Actor, PoisonPill, Props}
 import models.aggregation.{Ameblo, Hatena, Livedoor, Qiita}
 import models.elasticsearch.Elastic
-import models.{Article, Blog, BlogImpl, BlogTypeImpl}
+import models.{Article, Blog, BlogImpl, BlogTypeImpl, UserImpl}
 import play.Logger
 import play.api.libs.mailer.MailerClient
 import play.api.libs.ws._
 
-class AggregationActor @Inject()(implicit ws_client: WSClient, mailerClient: MailerClient, blog: BlogImpl, blog_type_impl: BlogTypeImpl) extends Actor {
+class AggregationActor @Inject()(implicit ws_client: WSClient, mailerClient: MailerClient, blog: BlogImpl, blog_type_impl: BlogTypeImpl, user: UserImpl) extends Actor {
     val prefix = "[AggregationActor]"
     var blog_count = 0
 
@@ -50,9 +50,14 @@ class AggregationActor @Inject()(implicit ws_client: WSClient, mailerClient: Mai
                 if (last_update_date != blog_data.update_date) {
                     blog.update(blog_data.id, last_update_date)
 
+                    val email = user.findById(blog_data.user_id) match {
+                        case Some(x) => x.email
+                        case None => ""
+                    }
+
                     if (blog_data.notification) {
                         val mail = this.context.actorOf(Props(classOf[MailActor], mailerClient))
-                        mail ! ("Blog update", blog_data.user_email, blog_data.name)
+                        mail ! ("Blog update", email, blog_data.name)
                     }
                 }
             }
