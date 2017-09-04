@@ -40,4 +40,12 @@ class UserImpl @Inject()(db: Database) extends Model[User](db) {
                 """.format(db_name)).on("email" -> email, "name" -> name, "password" -> password, "formal_flag" -> formal_flag).executeInsert()
         }
     }
+
+    def update(new_user: User): Int = {
+        db.withConnection { implicit c =>
+            SQL("""
+                update %s set name = {name}, email = {email} where id = {id}
+                """.format(db_name)).on("id" -> new_user.id, "name" -> new_user.name, "email" -> new_user.email).executeUpdate()
+        }
+    }
 }

@@ -1,0 +1,63 @@
+@import template._
+@import forms.SettingAccount
+@import b4.vertical.fieldConstructor
+@import play.cache.CacheApi
+@(cache: CacheApi, user_uuid: String, form: Form[SettingAccount], user: User, alert_type: Option[String], message: Option[String])(implicit messages:Messages)
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        @script()
+    <title>Settings</title>
+    </head>
+    <body>
+        @header(cache, user_uuid, "settings")
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    @message match {
+                        case Some(m) => {
+                            <div class="alert alert-@alert_type.get">
+                                @m
+                            </div>
+                        }
+                        case None => {}
+                    }
+                    <div class="card">
+                        <div class="card-header">Account Settings</div>
+                        <div class="card-block">
+                            @b4.form(routes.SettingAccountController.save()) {
+                                <div class="form-group form-inline">
+                                    <label class="col-2">Name</label>
+                                    @b4.text(form("name"), 'placeholder -> "Name", 'value -> user.name)
+                                </div>
+                                <div class="form-group form-inline">
+                                    <label class="col-2">Email</label>
+                                    @b4.text(form("email"), 'placeholder -> "Email", 'value -> user.email)
+                                </div>
+                                <hr />
+                                <button type="button" class="btn btn-info offset-8" data-toggle="modal" data-target="#checkModal">Save</button>
+
+                                <div class="modal fade" id="checkModal" tabindex="-1" role="dialog" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <form>
+                                                <div class="modal-body">
+                                                    @b4.password(form("password"), 'placeholder -> "Password")
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                                    <button type="submit" class="btn btn-primary" id="send-button">Send</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

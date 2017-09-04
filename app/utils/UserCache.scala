@@ -14,6 +14,10 @@ object UserCache {
         uuid
     }
 
+    def update(cache: CacheApi, uuid: String, u: User): Unit = {
+        cache.set(uuid, u, 3600)
+    }
+
     def remove(cache: CacheApi, uuid: String) = {
         cache.remove(uuid)
     }
