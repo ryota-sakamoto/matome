@@ -12,7 +12,7 @@ import play.cache.CacheApi
 import utils.{Security, UserCache}
 
 @Singleton
-class SettingAccountController @Inject()(cache: CacheApi, val messagesApi: MessagesApi, user: UserImpl) extends Controller with I18nSupport {
+class SettingAccountController @Inject()(implicit cache: CacheApi, val messagesApi: MessagesApi, user: UserImpl) extends Controller with I18nSupport {
     val prefix = "[SettingAccountController]"
 
     def index = AuthAction ( cache,
@@ -20,7 +20,7 @@ class SettingAccountController @Inject()(cache: CacheApi, val messagesApi: Messa
             val user_uuid = Security.getSessionUUID(request)
             val message = request.flash.get("message")
             val alert_type = request.flash.get("type")
-            val user_data = UserCache.get(cache, user_uuid).get
+            val user_data = UserCache.get(user_uuid).get
 
             Ok(views.html.settings.account(cache, user_uuid, SettingAccountForm.form, user_data, alert_type, message))
         }
@@ -30,7 +30,7 @@ class SettingAccountController @Inject()(cache: CacheApi, val messagesApi: Messa
         Action { implicit request =>
             val f = SettingAccountForm.form.bindFromRequest
             val user_uuid = Security.getSessionUUID(request)
-            val cache_user_data = UserCache.get(cache, user_uuid).get
+            val cache_user_data = UserCache.get(user_uuid).get
 
             val user_opt = user.login(cache_user_data.name, Security.md5(f.get.password))
 
@@ -43,7 +43,7 @@ class SettingAccountController @Inject()(cache: CacheApi, val messagesApi: Messa
                     user.update(new_user_data) match {
                         case 1 => {
                             Logger.info(s"$prefix Update Success id: ${new_user_data.id}")
-                            UserCache.update(cache, user_uuid, new_user_data)
+                            UserCache.update(user_uuid, new_user_data)
                             Redirect(routes.SettingAccountController.index()).flashing("message" -> "Update Success", "type" -> "success")
                         }
                         case _ => {

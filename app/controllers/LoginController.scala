@@ -11,7 +11,7 @@ import models.UserImpl
 import utils.{Security, UserCache}
 
 @Singleton
-class LoginController @Inject()(cache: CacheApi, val messagesApi: MessagesApi, user: UserImpl) extends Controller with I18nSupport {
+class LoginController @Inject()(implicit cache: CacheApi, val messagesApi: MessagesApi, user: UserImpl) extends Controller with I18nSupport {
     val prefix = "[LoginController]"
 
     def index = Action { implicit request =>
@@ -26,7 +26,7 @@ class LoginController @Inject()(cache: CacheApi, val messagesApi: MessagesApi, u
         user_opt match {
             case Some(u) => {
                 Logger.info(s"$prefix Login success id: ${u.id}")
-                val uuid = UserCache.set(cache, u)
+                val uuid = UserCache.set(u)
                 Redirect(routes.HomeController.index()).withSession(Security.session_name -> uuid)
             }
             case None => {
@@ -38,7 +38,7 @@ class LoginController @Inject()(cache: CacheApi, val messagesApi: MessagesApi, u
 
     def logout = Action { implicit request =>
         val user_uuid = Security.getSessionUUID(request)
-        UserCache.remove(cache, user_uuid)
+        UserCache.remove(user_uuid)
 
         Redirect(routes.LoginController.index()).withSession(request.session - Security.session_name)
     }

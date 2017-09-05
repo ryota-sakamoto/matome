@@ -4,21 +4,21 @@ import models.User
 import play.cache.CacheApi
 
 object UserCache {
-    def get(cache: CacheApi, uuid: String): Option[User] = {
+    def get(uuid: String)(implicit cache: CacheApi): Option[User] = {
         Option(cache.get(uuid))
     }
 
-    def set(cache: CacheApi, u: User): String = {
+    def set(u: User)(implicit cache: CacheApi): String = {
         val uuid = Security.generateUUID()
         cache.set(uuid, u, 3600)
         uuid
     }
 
-    def update(cache: CacheApi, uuid: String, u: User): Unit = {
+    def update(uuid: String, u: User)(implicit cache: CacheApi): Unit = {
         cache.set(uuid, u, 3600)
     }
 
-    def remove(cache: CacheApi, uuid: String) = {
+    def remove(uuid: String)(implicit cache: CacheApi) = {
         cache.remove(uuid)
     }
 }

@@ -12,11 +12,11 @@ import forms.BlogEditForm
 import play.api.i18n.{I18nSupport, MessagesApi}
 
 @Singleton
-class SettingBlogController @Inject()(cache: CacheApi, val messagesApi: MessagesApi, blog: BlogImpl, blog_type: BlogTypeImpl) extends Controller with I18nSupport {
+class SettingBlogController @Inject()(implicit cache: CacheApi, val messagesApi: MessagesApi, blog: BlogImpl, blog_type: BlogTypeImpl) extends Controller with I18nSupport {
     def blogList = AuthAction( cache,
         Action { implicit request =>
             val user_uuid = Security.getSessionUUID(request)
-            val user = UserCache.get(cache, user_uuid)
+            val user = UserCache.get(user_uuid)
 
             val b = blog.find(user.get.id)
             Ok(views.html.settings.blog_list(cache, user_uuid, b))
@@ -35,7 +35,7 @@ class SettingBlogController @Inject()(cache: CacheApi, val messagesApi: Messages
         Action { implicit request =>
             val f = BlogEditForm.form.bindFromRequest
             val user_uuid = Security.getSessionUUID(request)
-            val user = UserCache.get(cache, user_uuid)
+            val user = UserCache.get(user_uuid)
 
             val id = Security.generateUUID()
             val b = Blog(id, user.get.id, f.get.blog_type_id, f.get.name, f.get.url, f.get.notification, new Date(0))
@@ -49,7 +49,7 @@ class SettingBlogController @Inject()(cache: CacheApi, val messagesApi: Messages
     def blogEdit(id: String) = AuthAction( cache,
         Action { implicit request =>
             val user_uuid = Security.getSessionUUID(request)
-            val user = UserCache.get(cache, user_uuid)
+            val user = UserCache.get(user_uuid)
 
             val b = blog.findById(id, user.get.id)
             val blog_type_list = blog_type.list

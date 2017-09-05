@@ -15,7 +15,7 @@ case class AuthAction[A] (cache: CacheApi, action: Action[A]) extends Action[A] 
         val prefix = "[AuthAction]"
         Logger.info(s"$prefix start")
         val uuid = Security.getSessionUUID(request.asInstanceOf[Request[AnyContent]])
-        val user = UserCache.get(cache, uuid)
+        val user = UserCache.get(uuid)(cache)
 
         user match {
             case Some(u) => {
