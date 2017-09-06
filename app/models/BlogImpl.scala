@@ -24,16 +24,16 @@ class BlogImpl @Inject()(db: Database) {
         }
     }
 
-    def insert(blog: Blog) = {
+    def insert(blog: Blog): Option[Long] = {
         db.withConnection { implicit c =>
             SQL(
                 """
                    insert into blog value ({id}, {user_id}, {blog_type_id}, {name}, {url}, {notification}, {update_date})
-                """).on("id" -> blog.id, "user_id" -> blog.user_id, "blog_type_id" -> blog.blog_type_id, "name" -> blog.name, "url" -> blog.url, "notification" -> blog.notification, "update_date" -> blog.update_date).executeUpdate()
+                """).on("id" -> blog.id, "user_id" -> blog.user_id, "blog_type_id" -> blog.blog_type_id, "name" -> blog.name, "url" -> blog.url, "notification" -> blog.notification, "update_date" -> blog.update_date).executeInsert()
         }
     }
 
-    def update(id: String, blog_type_id: Int, name: String, url: String, notification: Boolean) = {
+    def update(id: String, blog_type_id: Int, name: String, url: String, notification: Boolean): Int = {
         db.withConnection { implicit c =>
             SQL(
                 """
@@ -42,7 +42,7 @@ class BlogImpl @Inject()(db: Database) {
         }
     }
 
-    def update(id: String, update_date: Date) = {
+    def update(id: String, update_date: Date): Int = {
         db.withConnection { implicit c =>
             SQL(
                 """
@@ -51,7 +51,7 @@ class BlogImpl @Inject()(db: Database) {
         }
     }
 
-    def delete(id: String) = {
+    def delete(id: String): Int = {
         db.withConnection { implicit c =>
             SQL(
                 """
@@ -60,7 +60,7 @@ class BlogImpl @Inject()(db: Database) {
         }
     }
 
-    def find(user_id: Int): Seq[Blog] = {
+    def findByUserId(user_id: Int): Seq[Blog] = {
         val s = db.withConnection { implicit c =>
             SQL(
                 """

@@ -15,7 +15,7 @@ class UserController @Inject()(cache: CacheApi, blog: BlogImpl, user: UserImpl) 
         val user_uuid = Security.getSessionUUID(request)
         user_opt match {
             case Some(u) => {
-                val b = blog.find(u.id)
+                val b = blog.findByUserId(u.id)
                 Ok(views.html.user.index(cache, user_uuid, b, u))
             }
             case None => NotFound(views.html.template.notfound())

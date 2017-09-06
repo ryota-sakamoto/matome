@@ -18,7 +18,7 @@ class SettingBlogController @Inject()(implicit cache: CacheApi, val messagesApi:
             val user_uuid = Security.getSessionUUID(request)
             val user = UserCache.get(user_uuid)
 
-            val b = blog.find(user.get.id)
+            val b = blog.findByUserId(user.get.id)
             Ok(views.html.settings.blog_list(cache, user_uuid, b))
         })
 
