@@ -24,12 +24,12 @@ class BlogImpl @Inject()(db: Database) {
         }
     }
 
-    def insert(blog: Blog): Option[Long] = {
+    def insert(blog: Blog): Int = {
         db.withConnection { implicit c =>
             SQL(
                 """
                    insert into blog value ({id}, {user_id}, {blog_type_id}, {name}, {url}, {notification}, {update_date})
-                """).on("id" -> blog.id, "user_id" -> blog.user_id, "blog_type_id" -> blog.blog_type_id, "name" -> blog.name, "url" -> blog.url, "notification" -> blog.notification, "update_date" -> blog.update_date).executeInsert()
+                """).on("id" -> blog.id, "user_id" -> blog.user_id, "blog_type_id" -> blog.blog_type_id, "name" -> blog.name, "url" -> blog.url, "notification" -> blog.notification, "update_date" -> blog.update_date).executeUpdate()
         }
     }
 
