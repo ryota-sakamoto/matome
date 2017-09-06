@@ -35,7 +35,7 @@ class UserImpl @Inject()(db: Database) {
     def login(name: String, password: String): Option[User] = {
         db.withConnection { implicit c =>
             SQL("""
-                select * from %user where name = {name} and password = {password}
+                select * from user where name = {name} and password = {password}
                 """).on("name" -> name, "password" -> password).as(mapper.singleOpt)
         }
     }
