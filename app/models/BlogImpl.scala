@@ -10,12 +10,20 @@ import play.api.libs.json.{Json, Writes}
 
 case class Blog(id: String, user_id: Int, blog_type_id: Int,  name: String, url: String, notification: Boolean, update_date: Date)
 
-class BlogImpl @Inject()(db: Database) extends Model[Blog](db) {
+class BlogImpl @Inject()(db: Database) {
     val parser = str("id") ~ int("user_id") ~ int("blog_type_id") ~ str("name") ~ str("url") ~ bool("notification") ~ date("update_date")
     val mapper = parser.map {
         case id ~ user_id ~ blog_type_id ~ name ~ url ~ notification ~ update_date => Blog(id, user_id, blog_type_id, name, url, notification, update_date)
     }
     val db_name = "blog"
+
+    def findAll(): Seq[Blog] = {
+        db.withConnection { implicit c =>
+            SQL("""
+                    select * from %s
+                """.format(db_name)).as(mapper *)
+        }
+    }
 
     def insert(blog: Blog) = {
         db.withConnection { implicit c =>

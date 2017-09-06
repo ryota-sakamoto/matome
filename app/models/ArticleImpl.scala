@@ -24,7 +24,7 @@ object Article {
     }
 }
 
-class ArticleImpl @Inject()(db: Database) extends Model[Article](db) {
+class ArticleImpl @Inject()(db: Database) {
     val parser = int("id") ~ str("blog_id") ~ str("title") ~ str("url") ~ date("update_date")
     val mapper = parser.map {
         case id ~ blog_id ~ title ~ url ~ update_date => Article(id, blog_id, title, url, update_date)

@@ -60,6 +60,13 @@ class UserImplTest extends PlaySpec with BeforeAndAfterAll {
             user_opt should not be empty
             user_opt.get.id should be (1)
         }
+
+        "findById method" in {
+            val user_opt = user.findById(1)
+
+            user_opt should not be empty
+            user_opt.get.id should be (1)
+        }
     }
 
     override def afterAll(): Unit = {

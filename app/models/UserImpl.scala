@@ -8,7 +8,7 @@ import play.api.db.Database
 
 case class User(id: Int, name: String, email: String)
 
-class UserImpl @Inject()(db: Database) extends Model[User](db) {
+class UserImpl @Inject()(db: Database) {
     val parser = int("id") ~ str("name") ~ str("email")
     val mapper = parser.map {
         case id ~ name ~ email => User(id, name, email)
@@ -22,6 +22,14 @@ class UserImpl @Inject()(db: Database) extends Model[User](db) {
             SQL("""
                 select * from user where name = {name}
             """).on("name" -> name).as(mapper.singleOpt)
+        }
+    }
+
+    def findById(id: Int): Option[User] = {
+        db.withConnection { implicit c =>
+            SQL("""
+                select * from user where id = {id}
+            """).on("id" -> id).as(mapper.singleOpt)
         }
     }
 
