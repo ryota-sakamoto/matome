@@ -15,13 +15,12 @@ class BlogImpl @Inject()(db: Database) {
     val mapper = parser.map {
         case id ~ user_id ~ blog_type_id ~ name ~ url ~ notification ~ update_date => Blog(id, user_id, blog_type_id, name, url, notification, update_date)
     }
-    val db_name = "blog"
 
     def findAll(): Seq[Blog] = {
         db.withConnection { implicit c =>
             SQL("""
-                    select * from %s
-                """.format(db_name)).as(mapper *)
+                    select * from blog
+                """).as(mapper *)
         }
     }
 
@@ -29,8 +28,8 @@ class BlogImpl @Inject()(db: Database) {
         db.withConnection { implicit c =>
             SQL(
                 """
-                   insert into %s value ({id}, {user_id}, {blog_type_id}, {name}, {url}, {notification}, {update_date})
-                """.format(db_name)).on("id" -> blog.id, "user_id" -> blog.user_id, "blog_type_id" -> blog.blog_type_id, "name" -> blog.name, "url" -> blog.url, "notification" -> blog.notification, "update_date" -> blog.update_date).executeUpdate()
+                   insert into blog value ({id}, {user_id}, {blog_type_id}, {name}, {url}, {notification}, {update_date})
+                """).on("id" -> blog.id, "user_id" -> blog.user_id, "blog_type_id" -> blog.blog_type_id, "name" -> blog.name, "url" -> blog.url, "notification" -> blog.notification, "update_date" -> blog.update_date).executeUpdate()
         }
     }
 
@@ -38,8 +37,8 @@ class BlogImpl @Inject()(db: Database) {
         db.withConnection { implicit c =>
             SQL(
                 """
-                   update %s blog set name = {name}, url = {url}, blog_type_id = {blog_type_id}, notification = {notification} where id = {id}
-                """.format(db_name)).on("id" -> id, "name" -> name, "url" -> url, "blog_type_id" -> blog_type_id, "notification" -> notification).executeUpdate()
+                   update blog blog set name = {name}, url = {url}, blog_type_id = {blog_type_id}, notification = {notification} where id = {id}
+                """).on("id" -> id, "name" -> name, "url" -> url, "blog_type_id" -> blog_type_id, "notification" -> notification).executeUpdate()
         }
     }
 
@@ -47,8 +46,8 @@ class BlogImpl @Inject()(db: Database) {
         db.withConnection { implicit c =>
             SQL(
                 """
-                   update %s blog set update_date = {update_date} where id = {id}
-                """.format(db_name)).on("id" -> id, "update_date" -> update_date).executeUpdate()
+                   update blog blog set update_date = {update_date} where id = {id}
+                """).on("id" -> id, "update_date" -> update_date).executeUpdate()
         }
     }
 

@@ -29,7 +29,6 @@ class ArticleImpl @Inject()(db: Database) {
     val mapper = parser.map {
         case id ~ blog_id ~ title ~ url ~ update_date => Article(id, blog_id, title, url, update_date)
     }
-    val db_name = "article"
 
     def findByBlogId(blog_id: String, limit: Int, offset: Int): Seq[Article] = {
         db.withConnection { implicit c =>
@@ -48,8 +47,8 @@ class ArticleImpl @Inject()(db: Database) {
         db.withConnection { implicit c =>
             SQL(
                 """
-                   insert into %s values(null, {blog_id}, {title}, {url}, {update_date})
-                """.format(db_name)).on("blog_id" -> article.blog_id, "title" -> article.title, "url" -> article.url, "update_date" -> article.update_date).executeInsert()
+                   insert into article values(null, {blog_id}, {title}, {url}, {update_date})
+                """).on("blog_id" -> article.blog_id, "title" -> article.title, "url" -> article.url, "update_date" -> article.update_date).executeInsert()
         }
     }
 }

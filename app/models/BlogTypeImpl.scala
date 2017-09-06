@@ -9,7 +9,6 @@ import play.api.db.Database
 case class BlogType(id: Int, name: String)
 
 class BlogTypeImpl @Inject()(db: Database) {
-    val db_name = "blog_type"
     val parser = int("id") ~ str("name")
     val mapper = parser.map {
         case id ~ name => BlogType(id, name)
@@ -18,16 +17,16 @@ class BlogTypeImpl @Inject()(db: Database) {
     def list: Seq[BlogType] = {
         db.withConnection { implicit c =>
             SQL("""
-                select * from %s
-                """.format(db_name)).as(mapper *)
+                select * from blog_type
+                """).as(mapper *)
         }
     }
 
     def findById(id: Int): Option[BlogType] = {
         db.withConnection { implicit c =>
             SQL("""
-                select * from %s where id = {id}
-                """.format(db_name)).on("id" -> id).as(mapper.singleOpt)
+                select * from blog_type where id = {id}
+                """).on("id" -> id).as(mapper.singleOpt)
         }
     }
 }
