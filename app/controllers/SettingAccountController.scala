@@ -39,16 +39,21 @@ class SettingAccountController @Inject()(implicit cache: CacheApi, val messagesA
                     val name = f.get.name
                     val email = f.get.email
 
-                    val new_user_data = u.copy(name = name, email = email)
-                    user.update(new_user_data) match {
-                        case 1 => {
-                            Logger.info(s"$prefix Update Success id: ${new_user_data.id}")
-                            UserCache.update(user_uuid, new_user_data)
-                            Redirect(routes.SettingAccountController.index()).flashing("message" -> "Update Success", "type" -> "success")
-                        }
-                        case _ => {
-                            Logger.error(s"$prefix Update Error id: ${new_user_data.id}")
-                            Redirect(routes.SettingAccountController.index()).flashing("message" -> "Update Error", "type" -> "danger")
+                    if (user.checkExists(name)) {
+                        Logger.info(s"$prefix Duplicate Name: ${u.name} => $name")
+                        Redirect(routes.SettingAccountController.index()).flashing("message" -> "Duplicate Name", "type" -> "danger")
+                    } else {
+                        val new_user_data = u.copy(name = name, email = email)
+                        user.update(new_user_data) match {
+                            case 1 => {
+                                Logger.info(s"$prefix Update Success name: ${u.name} => ${new_user_data.name}")
+                                UserCache.update(user_uuid, new_user_data)
+                                Redirect(routes.SettingAccountController.index()).flashing("message" -> "Update Success", "type" -> "success")
+                            }
+                            case _ => {
+                                Logger.error(s"$prefix Update Error name: ${u.name} => ${new_user_data.name}")
+                                Redirect(routes.SettingAccountController.index()).flashing("message" -> "Update Error", "type" -> "danger")
+                            }
                         }
                     }
                 }

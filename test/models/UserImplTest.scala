@@ -67,6 +67,14 @@ class UserImplTest extends PlaySpec with BeforeAndAfterAll {
             user_opt should not be empty
             user_opt.get.id should be (1)
         }
+
+        "checkExists method" in {
+            val user_exists = user.checkExists("new_name")
+            val user_no_exists = user.checkExists("name")
+
+            user_exists shouldBe true
+            user_no_exists shouldBe false
+        }
     }
 
     override def afterAll(): Unit = {

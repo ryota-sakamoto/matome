@@ -55,4 +55,13 @@ class UserImpl @Inject()(db: Database) {
                 """).on("id" -> new_user.id, "name" -> new_user.name, "email" -> new_user.email).executeUpdate()
         }
     }
+
+    def checkExists(name: String): Boolean = {
+        val user_opt = findByName(name)
+
+        user_opt match {
+            case Some(u) => true
+            case None => false
+        }
+    }
 }
