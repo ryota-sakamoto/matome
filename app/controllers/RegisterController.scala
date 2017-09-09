@@ -29,7 +29,7 @@ class RegisterController @Inject()(cache: CacheApi, mailerClient: MailerClient, 
     def register = Action { implicit request =>
         val f = RegisterForm.form.bindFromRequest
 
-        val error = f.errors.map( error =>
+        val form_error = f.errors.map( error =>
             error.key match {
                 case "name" => "Name Required"
                 case "email" => "Email Required"
@@ -38,6 +38,23 @@ class RegisterController @Inject()(cache: CacheApi, mailerClient: MailerClient, 
                 case _ => error.message
             }
         )
+
+        val name = f.data.getOrElse("name", "")
+        val email = f.data.getOrElse("email", "")
+
+        val name_error = if (user_impl.checkExists(name)) {
+            Seq[String](s"Already Use Name [ $name ]")
+        } else {
+            Seq.empty[String]
+        }
+
+        val email_error = if (user_impl.checkExistsByEmail(email)) {
+            Seq[String](s"Already Use Email [ $email ]")
+        } else {
+            Seq.empty[String]
+        }
+
+        val error = form_error ++ name_error ++ email_error
 
         if (error.isEmpty) {
             f.value match {
@@ -50,25 +67,10 @@ class RegisterController @Inject()(cache: CacheApi, mailerClient: MailerClient, 
                 }
             }
         } else {
-            val name = f.data.getOrElse("name", "")
-            val email = f.data.getOrElse("email", "")
-
-            val name_error = if (user_impl.checkExists(name)) {
-                Seq[String](s"Already Use Name [ $name ]")
-            } else {
-                Seq.empty[String]
-            }
-
-            val email_error = if (user_impl.checkExistsByEmail(email)) {
-                Seq[String](s"Already Use Email [ $email ]")
-            } else {
-                Seq.empty[String]
-            }
-
             Redirect(routes.RegisterController.index()).flashing(
                 "name" -> name,
                 "email" -> email,
-                "message" -> (error ++ name_error ++ email_error).mkString(",")
+                "message" -> error.mkString(",")
             )
         }
     }
