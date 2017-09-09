@@ -32,6 +32,14 @@ class UserImpl @Inject()(db: Database) {
         }
     }
 
+    def findByEmail(email: String): Option[User] = {
+        db.withConnection { implicit c =>
+            SQL("""
+                  select * from user where email = {email}
+                """).on("email" -> email).as(mapper.singleOpt)
+        }
+    }
+
     def login(name: String, password: String): Option[User] = {
         db.withConnection { implicit c =>
             SQL("""
@@ -58,6 +66,15 @@ class UserImpl @Inject()(db: Database) {
 
     def checkExists(name: String): Boolean = {
         val user_opt = findByName(name)
+
+        user_opt match {
+            case Some(u) => true
+            case None => false
+        }
+    }
+
+    def checkExistsByEmail(email: String): Boolean = {
+        val user_opt = findByEmail(email)
 
         user_opt match {
             case Some(u) => true

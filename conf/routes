@@ -15,7 +15,10 @@ DELETE  /settings/blogs/:id         controllers.SettingBlogController.blogDelete
 GET     /login                      controllers.LoginController.index
 POST    /login                      controllers.LoginController.login
 GET     /logout                     controllers.LoginController.logout
+
+GET     /register                   controllers.RegisterController.index
 POST    /register                   controllers.RegisterController.register
+
 GET     /$id<[0-9a-zA-Z_]+>         controllers.UserController.show(id: String)
 GET     /$id<[0-9a-zA-Z_]+>/rss     controllers.UserController.rss(id: String)
 
