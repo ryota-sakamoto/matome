@@ -18,7 +18,7 @@ class UserController @Inject()(cache: CacheApi, blog: BlogImpl, user: UserImpl) 
                 val b = blog.findByUserId(u.id)
                 Ok(views.html.user.index(cache, user_uuid, b, u))
             }
-            case None => NotFound(views.html.template.notfound())
+            case None => NotFound(views.html.template.notfound("User Not Found"))
         }
     }
 

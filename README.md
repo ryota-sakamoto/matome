@@ -1,7 +1,5 @@
 # まとめツール (仮)
-
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/da331c3732d249d6b1c0a3989f5ae8b9)](https://www.codacy.com/app/ryota-sakamoto/matome?utm_source=github.com&utm_medium=referral&utm_content=ryota-sakamoto/matome&utm_campaign=badger)
-
 
 ## 開発環境
 - Windows10

@@ -3,7 +3,7 @@
 @import b4.vertical.fieldConstructor
 @import forms.BlogEdit
 
-@(cache: CacheApi, user_uuid: String, blog: Blog, blog_type: Seq[BlogType], form: Form[BlogEdit])(implicit messages:Messages)
+@(cache: CacheApi, user_uuid: String, blog_opt: Option[Blog], blog_type: Seq[BlogType], form: Form[BlogEdit])(implicit messages:Messages)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -19,60 +19,64 @@
             <div class="col-sm-10">
                 <div class="card col-sm-6">
                     <div class="card-block">
-                        @if(blog == null){
-                            @b4.form(routes.SettingBlogController.blogInsert()) {
-                                <div class="form-group">
-                                    <label>Name</label>
-                                    @b4.text(form("name"), 'placeholder -> "Name")
-                                </div>
-                                <div class="form-group">
-                                    <label >URL</label>
-                                    @b4.url(form("url"), 'placeholder -> "URL")
-                                </div>
-                                <div class="form-group">
-                                    <label >Blog Type</label>
-                                    @b4.select(form("blog_type_id"), options = blog_type.map(b => b.id.toString -> b.name), '_default -> "Select Blog Type", 'required -> "required")
-                                </div>
-                                <div class="form-group">
-                                    <label >Notification</label>
-                                    @b4.checkbox(form("notification"))
-                                </div>
-                                <button type="submit" class="btn btn-primary" value="save">Save</button>
-                            }
-                        }else{
-                            @b4.form(routes.SettingBlogController.blogUpdate(blog.id)) {
-                                <div class="form-group">
-                                    <label>Name</label>
-                                    @b4.text(form("name"), 'placeholder -> "Name", 'value -> blog.name)
-                                </div>
-                                <div class="form-group">
-                                    <label >URL</label>
-                                    @b4.url(form("url"), 'placeholder -> "URL", 'value -> blog.url)
-                                </div>
-                                <div class="form-group">
-                                    <label >Blog Type</label>
-                                    @b4.select(form("blog_type_id"), options = blog_type.map(b => b.id.toString -> b.name), '_default -> "Select Blog Type", 'required -> "required", 'value -> blog.blog_type_id)
-                                </div>
-                                <div class="form-group">
-                                    <label >Notification</label>
-                                    @b4.checkbox(form("notification"), 'checked -> blog.notification)
-                                </div>
-                                <button type="submit" class="btn btn-primary" id="save-button">Save</button>
-                                <button type="submit" class="btn btn-danger" id="delete-button">Delete</button>
-                                <script>
-                                    $("#delete-button").on("click", (e) => {
-                                        e.preventDefault();
+                        @blog_opt match {
+                            case Some(blog) => {
+                                @b4.form(routes.SettingBlogController.blogUpdate(blog.id)) {
+                                    <div class="form-group">
+                                        <label>Name</label>
+                                        @b4.text(form("name"), 'placeholder -> "Name", 'value -> blog.name)
+                                    </div>
+                                    <div class="form-group">
+                                        <label >URL</label>
+                                        @b4.url(form("url"), 'placeholder -> "URL", 'value -> blog.url)
+                                    </div>
+                                    <div class="form-group">
+                                        <label >Blog Type</label>
+                                        @b4.select(form("blog_type_id"), options = blog_type.map(b => b.id.toString -> b.name), '_default -> "Select Blog Type", 'required -> "required", 'value -> blog.blog_type_id)
+                                    </div>
+                                    <div class="form-group">
+                                        <label >Notification</label>
+                                        @b4.checkbox(form("notification"), 'checked -> blog.notification)
+                                    </div>
+                                    <button type="submit" class="btn btn-primary" id="save-button">Save</button>
+                                    <button type="submit" class="btn btn-danger" id="delete-button">Delete</button>
+                                    <script>
+                                        $("#delete-button").on("click", (e) => {
+                                            e.preventDefault();
 
-                                        if (window.confirm("delete?")) {
-                                            $.ajax({
-                                                type: "delete",
-                                                url: "@routes.SettingBlogController.blogDelete(blog.id)",
-                                            }).done(() => {
-                                                location.href = "@routes.SettingBlogController.blogList()"
-                                            })
-                                        }
-                                    });
-                                </script>
+                                            if (window.confirm("delete?")) {
+                                                $.ajax({
+                                                    type: "delete",
+                                                    url: "@routes.SettingBlogController.blogDelete(blog.id)",
+                                                }).done(() => {
+                                                    location.href = "@routes.SettingBlogController.blogList()"
+                                                })
+                                            }
+                                        });
+                                    </script>
+                                }
+                            }
+
+                            case None => {
+                                @b4.form(routes.SettingBlogController.blogInsert()) {
+                                    <div class="form-group">
+                                        <label>Name</label>
+                                        @b4.text(form("name"), 'placeholder -> "Name")
+                                    </div>
+                                    <div class="form-group">
+                                        <label >URL</label>
+                                        @b4.url(form("url"), 'placeholder -> "URL")
+                                    </div>
+                                    <div class="form-group">
+                                        <label >Blog Type</label>
+                                        @b4.select(form("blog_type_id"), options = blog_type.map(b => b.id.toString -> b.name), '_default -> "Select Blog Type", 'required -> "required")
+                                    </div>
+                                    <div class="form-group">
+                                        <label >Notification</label>
+                                        @b4.checkbox(form("notification"))
+                                    </div>
+                                    <button type="submit" class="btn btn-primary" value="save">Save</button>
+                                }
                             }
                         }
                     </div>

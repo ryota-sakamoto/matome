@@ -15,14 +15,14 @@ class ErrorHandler extends HttpErrorHandler {
     def onClientError(request: RequestHeader, statusCode: Int, message: String) = {
         Logger.error(s"$prefix $message")
         Future.successful(
-            NotFound(views.html.template.notfound())
+            NotFound(views.html.template.notfound("This Page is Not Found"))
         )
     }
 
     def onServerError(request: RequestHeader, exception: Throwable) = {
         Logger.error(s"$prefix $exception")
         Future.successful(
-            NotFound(views.html.template.notfound())
+            InternalServerError(views.html.template.notfound("Server Error"))
         )
     }
 }

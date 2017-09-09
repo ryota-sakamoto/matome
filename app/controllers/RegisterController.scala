@@ -13,8 +13,14 @@ class RegisterController @Inject()(cache: CacheApi, mailerClient: MailerClient, 
     def register = Action { implicit request =>
         val f = RegisterForm.form.bindFromRequest
 
-        registerActor ! f.get
-
-        Ok("Send Create User Request")
+        f.value match {
+            case Some(form) => {
+                registerActor ! form
+                Ok("Send Create User Request")
+            }
+            case None => {
+                BadRequest(views.html.template.notfound("Bad Request"))
+            }
+        }
     }
 }

@@ -27,14 +27,12 @@ trait AggregationTrait {
             r.xml \ "_"
         }
         Await.ready(response, Duration.Inf)
-        Option(
-            response.value.get match {
-                case Success(s: NodeSeq) => s
-                case Failure(e) => {
-                    Logger.error(s"$prefix $e")
-                    null
-                }
+        response.value.get match {
+            case Success(s: NodeSeq) => Some(s)
+            case Failure(e) => {
+                Logger.error(s"$prefix $e")
+                None
             }
-        )
+        }
     }
 }
