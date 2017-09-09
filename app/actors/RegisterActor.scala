@@ -14,7 +14,7 @@ class RegisterActor @Inject()(mailerClient: MailerClient, user: UserImpl, @Named
         case data: Register => {
             val email = data.email
             val name = data.name
-            val password = Security.md5(data.password)
+            val password = Security.encrypt(data.password)
 
             val id = user.create(email, name, password, user.not_formal)
             id match {

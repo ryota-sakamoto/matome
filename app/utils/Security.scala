@@ -1,15 +1,18 @@
 package utils
 
-import java.security.MessageDigest
 import java.util.UUID.randomUUID
+import javax.crypto.Mac
+import javax.crypto.spec.SecretKeySpec
 
 import play.api.mvc.{AnyContent, Request}
 
 object Security {
     val session_name = "user_uuid"
 
-    def md5(text: String): String = {
-        MessageDigest.getInstance("MD5").digest(text.getBytes).map("%02x".format(_)).mkString
+    def encrypt(text: String): String = {
+        val mac = Mac.getInstance("HmacSHA256")
+        mac.init(new SecretKeySpec(text.getBytes, "HmacSHA256"))
+        mac.doFinal().map("%02x".format(_)).mkString
     }
 
     def generateUUID(): String = {

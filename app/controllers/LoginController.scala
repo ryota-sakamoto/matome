@@ -24,7 +24,7 @@ class LoginController @Inject()(implicit cache: CacheApi, val messagesApi: Messa
 
         f.value match {
             case Some(form) => {
-                val user_opt = user.login(form.name, Security.md5(form.password))
+                val user_opt = user.login(form.name, Security.encrypt(form.password))
                 user_opt match {
                     case Some(u) => {
                         Logger.info(s"$prefix Login success id: ${u.id}")

@@ -32,7 +32,7 @@ class SettingAccountController @Inject()(implicit cache: CacheApi, val messagesA
             val user_uuid = Security.getSessionUUID(request)
             val cache_user_data = UserCache.get(user_uuid).get
 
-            val user_opt = user.login(cache_user_data.name, Security.md5(f.get.password))
+            val user_opt = user.login(cache_user_data.name, Security.encrypt(f.get.password))
 
             user_opt match {
                 case Some(u) => {
