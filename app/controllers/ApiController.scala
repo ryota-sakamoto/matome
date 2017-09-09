@@ -11,8 +11,8 @@ import utils.Validation
 class ApiController @Inject()(article: ArticleImpl) extends Controller {
     def getArticle(id: String) = Action { implicit request =>
         if (Validation.validate("offset" -> 'int, "limit" -> 'int)) {
-            val offset = request.getQueryString("offset").get.toInt
-            val limit = request.getQueryString("limit").get.toInt
+            val offset = request.getQueryString("offset").getOrElse("0").toInt
+            val limit = request.getQueryString("limit").getOrElse("0").toInt
 
             val articles = article.findByBlogId(id, limit, offset)
             Ok(Json.stringify(Json.toJson(articles))).as("application/json")

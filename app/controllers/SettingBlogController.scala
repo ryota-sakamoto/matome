@@ -27,7 +27,7 @@ class SettingBlogController @Inject()(implicit cache: CacheApi, val messagesApi:
             val user_uuid = Security.getSessionUUID(request)
             val blog_type_list = blog_type.list
 
-            Ok(views.html.settings.edit(cache, user_uuid, null, blog_type_list, BlogEditForm.form))
+            Ok(views.html.settings.edit(cache, user_uuid, None, blog_type_list, BlogEditForm.form))
         }
     )
 
@@ -38,11 +38,17 @@ class SettingBlogController @Inject()(implicit cache: CacheApi, val messagesApi:
             val user = UserCache.get(user_uuid)
 
             val id = Security.generateUUID()
-            val b = Blog(id, user.get.id, f.get.blog_type_id, f.get.name, f.get.url, f.get.notification, new Date(0))
 
-            blog.insert(b)
+            f.value match {
+                case Some(form) => {
+                    val b = Blog(id, user.get.id, form.blog_type_id, form.name, form.url, form.notification, new Date(0))
 
-            Redirect(routes.SettingBlogController.blogList())
+                    blog.insert(b)
+
+                    Redirect(routes.SettingBlogController.blogList())
+                }
+                case None => BadRequest(views.html.template.notfound("BadRequest"))
+            }
         }
     )
 
@@ -51,11 +57,11 @@ class SettingBlogController @Inject()(implicit cache: CacheApi, val messagesApi:
             val user_uuid = Security.getSessionUUID(request)
             val user = UserCache.get(user_uuid)
 
-            val b = blog.findById(id, user.get.id)
+            val blog_opt = blog.findById(id, user.get.id)
             val blog_type_list = blog_type.list
-            b match {
-                case Some(b) => Ok(views.html.settings.edit(cache, user_uuid, b, blog_type_list, BlogEditForm.form))
-                case None => NotFound(views.html.template.notfound())
+            blog_opt match {
+                case Some(b) => Ok(views.html.settings.edit(cache, user_uuid, Some(b), blog_type_list, BlogEditForm.form))
+                case None => NotFound(views.html.template.notfound("Blog Not Found"))
             }
         }
     )
@@ -64,9 +70,14 @@ class SettingBlogController @Inject()(implicit cache: CacheApi, val messagesApi:
         Action { implicit request =>
             val f = BlogEditForm.form.bindFromRequest
 
-            blog.update(id, f.get.blog_type_id, f.get.name, f.get.url, f.get.notification)
+            f.value match {
+                case Some(form) => {
+                    blog.update(id, form.blog_type_id, form.name, form.url, form.notification)
 
-            Redirect(routes.SettingBlogController.blogList())
+                    Redirect(routes.SettingBlogController.blogList())
+                }
+                case None => BadRequest(views.html.template.notfound("BadRequest"))
+            }
         }
     )
 

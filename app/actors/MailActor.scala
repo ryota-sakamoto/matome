@@ -27,9 +27,13 @@ class MailActor @Inject()(mailerClient: MailerClient) extends Actor {
             }
 
             Await.ready(send_mail, Duration.Inf)
-            send_mail.value.get match {
-                case Success(s) => Logger.info(s"$prefix ${email.from} => ${email.to.mkString(",")}, subject: ${email.subject}, body: ${email.bodyText}")
-                case Failure(e) => Logger.error(s"$prefix $e")
+            for (
+                response <- send_mail.value
+            ) {
+                response match {
+                    case Success(s) => Logger.info(s"$prefix ${email.from} => ${email.to.mkString(",")}, subject: ${email.subject}, body: ${email.bodyText}")
+                    case Failure(e) => Logger.error(s"$prefix $e")
+                }
             }
             context.parent ! End()
         }

@@ -22,17 +22,22 @@ class LoginController @Inject()(implicit cache: CacheApi, val messagesApi: Messa
     def login = Action { implicit request =>
         val f = LoginForm.form.bindFromRequest
 
-        val user_opt = user.login(f.get.name, Security.md5(f.get.password))
-        user_opt match {
-            case Some(u) => {
-                Logger.info(s"$prefix Login success id: ${u.id}")
-                val uuid = UserCache.set(u)
-                Redirect(routes.HomeController.index()).withSession(Security.session_name -> uuid)
+        f.value match {
+            case Some(form) => {
+                val user_opt = user.login(form.name, Security.md5(form.password))
+                user_opt match {
+                    case Some(u) => {
+                        Logger.info(s"$prefix Login success id: ${u.id}")
+                        val uuid = UserCache.set(u)
+                        Redirect(routes.HomeController.index()).withSession(Security.session_name -> uuid)
+                    }
+                    case None => {
+                        Logger.info(s"$prefix Login Failed")
+                        Redirect(routes.LoginController.index()).flashing("message" -> "Login failed")
+                    }
+                }
             }
-            case None => {
-                Logger.info(s"$prefix Login Failed")
-                Redirect(routes.LoginController.index()).flashing("message" -> "Login failed")
-            }
+            case None => BadRequest(views.html.template.notfound("Bad Request"))
         }
     }
 
