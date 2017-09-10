@@ -39,7 +39,7 @@ class SettingAccountController @Inject()(implicit cache: CacheApi, val messagesA
                     val name = f.get.name
                     val email = f.get.email
 
-                    if (user.checkExists(name)) {
+                    if (u.name != name && user.checkExists(name)) {
                         Logger.info(s"$prefix Duplicate Name: ${u.name} => $name")
                         Redirect(routes.SettingAccountController.index()).flashing("message" -> "Duplicate Name", "type" -> "danger")
                     } else {

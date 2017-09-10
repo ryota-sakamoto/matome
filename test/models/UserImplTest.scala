@@ -22,10 +22,10 @@ class UserImplTest extends PlaySpec with BeforeAndAfterAll {
         val email = "test@example.com"
         val name = "name"
         val password = "password"
-        val formal_flag = 0
+        val status = 0
 
         "create method" in {
-            val result1 = user.create(email, name, password, formal_flag)
+            val result1 = user.create(email, name, password, status)
 
             result1 should not be empty
             result1.get should be (1)

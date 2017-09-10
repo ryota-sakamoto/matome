@@ -48,11 +48,11 @@ class UserImpl @Inject()(db: Database) {
         }
     }
 
-    def create(email: String, name: String, password: String, formal_flag: Int): Option[Long] = {
+    def create(email: String, name: String, password: String, status: Int): Option[Long] = {
         db.withConnection { implicit c =>
             SQL("""
-                insert into user value (null, {email}, {name}, {password}, {formal_flag})
-                """).on("email" -> email, "name" -> name, "password" -> password, "formal_flag" -> formal_flag).executeInsert()
+                insert into user value (null, {email}, {name}, {password}, {status})
+                """).on("email" -> email, "name" -> name, "password" -> password, "status" -> status).executeInsert()
         }
     }
 
