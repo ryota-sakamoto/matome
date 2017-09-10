@@ -13,8 +13,9 @@ class UserImpl @Inject()(db: Database) {
     val mapper = parser.map {
         case id ~ name ~ email => User(id, name, email)
     }
-    val not_formal = 0
-    val formal = 1
+
+    val uncertified = 0
+    val certified = 1
 
     def findByName(name: String): Option[User] = {
         db.withConnection { implicit c =>
@@ -61,6 +62,14 @@ class UserImpl @Inject()(db: Database) {
             SQL("""
                 update user set name = {name}, email = {email} where id = {id}
                 """).on("id" -> new_user.id, "name" -> new_user.name, "email" -> new_user.email).executeUpdate()
+        }
+    }
+
+    def updateStatus(id: Int, status: Int): Int = {
+        db.withConnection { implicit c =>
+            SQL("""
+                update user set status = {status} where id = {id}
+                """).on("id" -> id, "status" -> status).executeUpdate()
         }
     }
 
