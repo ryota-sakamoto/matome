@@ -20,7 +20,7 @@ class AuthImpl @Inject()(db: Database) {
                 """
                   select auth.id, auth.user_id from auth
                   inner join user on user.id = auth.user_id and user.status = 0
-                  where key = {key}
+                  where auth_key = {key}
                 """).on("key" -> key).as(mapper.singleOpt)
         }
     }

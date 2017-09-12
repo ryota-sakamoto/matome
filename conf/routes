@@ -19,6 +19,8 @@ GET     /logout                     controllers.LoginController.logout
 GET     /register                   controllers.RegisterController.index
 POST    /register                   controllers.RegisterController.register
 
+GET     /auth                       controllers.AuthController.auth
+
 GET     /$id<[0-9a-zA-Z_]+>         controllers.UserController.show(id: String)
 GET     /$id<[0-9a-zA-Z_]+>/rss     controllers.UserController.rss(id: String)
 

@@ -24,7 +24,8 @@ class AuthController @Inject()(cache: CacheApi, authImpl: AuthImpl, userImpl: Us
                         val count = userImpl.updateStatus(a.user_id, userImpl.certified)
 
                         if (count == 1) {
-                            Ok("Success certified")
+                            Logger.info(s"$prefix Success certified user_id: ${a.user_id}")
+                            Redirect(routes.LoginController.index())
                         } else {
                             Logger.error(s"$prefix Status Update error ${a.user_id}")
                             BadRequest(views.html.template.notfound("Bad Request"))
