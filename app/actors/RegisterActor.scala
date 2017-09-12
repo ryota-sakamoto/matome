@@ -3,13 +3,14 @@ package actors
 import javax.inject.{Inject, Named}
 
 import akka.actor.{Actor, ActorRef, Props}
+import controllers.routes
 import forms.Register
 import play.Logger
-import models.UserImpl
+import models.{AuthImpl, UserImpl}
 import play.api.libs.mailer.MailerClient
 import utils.Security
 
-class RegisterActor @Inject()(mailerClient: MailerClient, user: UserImpl, @Named("mailActor") mailActor: ActorRef) extends Actor {
+class RegisterActor @Inject()(mailerClient: MailerClient, user: UserImpl, auth: AuthImpl, @Named("mailActor") mailActor: ActorRef) extends Actor {
     def receive = {
         case data: Register => {
             val email = data.email
@@ -20,7 +21,18 @@ class RegisterActor @Inject()(mailerClient: MailerClient, user: UserImpl, @Named
             id match {
                 case Some(x) => {
                     Logger.info("create user id: %d".format(x))
-                    mailActor ! ("Register Success",email, "Ok")
+
+                    val auth_key = Security.generateKey()
+                    auth.create(x.toInt, Security.encrypt(auth_key))
+                    val auth_url = s"http://localhost:9000${routes.AuthController.auth().url}?key=$auth_key"
+
+                    val message =
+                        s"""
+                            please auth
+                            $auth_url
+                        """
+
+                    mailActor ! (message, email, "Ok")
                 }
                 case None => Logger.error("create user failed")
             }

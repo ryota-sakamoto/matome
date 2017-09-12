@@ -8,6 +8,7 @@ import play.api.mvc.{AnyContent, Request}
 
 object Security {
     val session_name = "user_uuid"
+    val alpha = ('a' to 'z') ++ ('A' to 'Z')
 
     def encrypt(text: String): String = {
         val mac = Mac.getInstance("HmacSHA256")
@@ -17,6 +18,12 @@ object Security {
 
     def generateUUID(): String = {
         randomUUID.toString.replace("-", "")
+    }
+
+    def generateKey(): String = {
+        encrypt(generateUUID()).map { c =>
+            alpha(c.toInt % 52)
+        }.mkString
     }
 
     def getSessionUUID(request: Request[AnyContent]): String = {

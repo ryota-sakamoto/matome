@@ -24,4 +24,13 @@ class AuthImpl @Inject()(db: Database) {
                 """).on("key" -> key).as(mapper.singleOpt)
         }
     }
+
+    def create(user_id: Int, key: String): Int = {
+        db.withConnection { implicit c =>
+            SQL(
+                """
+                  insert into auth value (null, {user_id}, {key})
+                """).on("user_id" -> user_id, "key" -> key).executeUpdate()
+        }
+    }
 }
