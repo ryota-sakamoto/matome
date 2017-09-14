@@ -14,9 +14,9 @@ object Ameblo extends AggregationTrait {
                 s.foreach { item =>
                     item.label match {
                         case "item" => {
-                            val title = (item \ "title").text
-                            val link = (item \ "link").text
-                            val date = (item \ "date").text
+                            val title = convert((item \ "title").text)
+                            val link = convert((item \ "link").text)
+                            val date = convert((item \ "date").text)
                             val update_date = Aggregation.convertToDate(date)
 
                             set += ArticleData(title, link, update_date)
@@ -40,5 +40,9 @@ object Ameblo extends AggregationTrait {
             }
             case _ => url
         }
+    }
+
+    def convert(c: String): String = {
+        new String(c.getBytes("ISO8859_1"), "UTF-8")
     }
 }
