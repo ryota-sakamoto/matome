@@ -5,6 +5,7 @@ services:
         container_name: app
         depends_on:
             - db
+            - elasticsearch
         build: .
         ports:
             - "80:9000"
@@ -25,3 +26,11 @@ services:
             - "3306:3306"
         #volumes:
         #    - /data/mysql:/var/lib/mysql
+    elasticsearch:
+        container_name: elasticsearch
+        build:
+            context: .
+            dockerfile: Dockerfile-elasticsearch
+        command: bash -c "elasticsearch && curl -XPUT 'http://localhost:9200/matome' -d '{"index":{"analysis":{"tokenizer":{"kuromoji":{"type":"kuromoji_tokenizer","mode":"search"}},"analyzer":{"default":{"type":"custom","tokenizer":"kuromoji_tokenizer"}}}}}'"
+        ports:
+            - "9200:9200"

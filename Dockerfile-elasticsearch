@@ -1,0 +1,6 @@
+FROM elasticsearch:5.4.3
+MAINTAINER Ryota Sakamoto
+
+RUN elasticsearch-plugin  install analysis-kuromoji
+
+EXPOSE 9200
