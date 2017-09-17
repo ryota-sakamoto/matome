@@ -4,7 +4,7 @@ import javax.inject.Inject
 
 import actors.status.End
 import akka.actor.{Actor, PoisonPill, Props}
-import models.aggregation.{Ameblo, Hatena, Livedoor, Qiita}
+import models.aggregation._
 import models.elasticsearch.Elastic
 import models._
 import play.Logger
@@ -28,6 +28,7 @@ class AggregationActor @Inject()(implicit ws_client: WSClient, mailerClient: Mai
                     case Hatena.blog_type => Hatena.aggregate(blog_data.url)
                     case Qiita.blog_type => Qiita.aggregate(blog_data.url)
                     case Ameblo.blog_type => Ameblo.aggregate(blog_data.url)
+                    case Pixiv.blog_type => Pixiv.aggregate(blog_data.url)
                     case _ => {
                         Logger.error("Not Found Blog Type")
                         Seq.empty
