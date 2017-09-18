@@ -20,7 +20,7 @@ object Pixiv extends AggregationTrait {
             val image = images.get(i)
 
             val upload_date = image.getElementsByTag("img").first().attr("data-src") match {
-                case date_regex(y, m, d, h, _i, s) => "%s-%s-%sT%s:%s:%s.000Z".format(y, m, d, h, _i, s)
+                case date_regex(y, m, d, h, _i, s) => "%s-%s-%sT%s:%s:%s+09:00".format(y, m, d, h, _i, s)
             }
             val update_date = Aggregation.convertToDate(upload_date)
 
