@@ -60,7 +60,7 @@ class RegisterController @Inject()(cache: CacheApi, mailerClient: MailerClient, 
             f.value match {
                 case Some(form) => {
                     registerActor ! form
-                    Ok("Send Create User Request")
+                    Ok(views.html.register.success(cache, ""))
                 }
                 case None => {
                     BadRequest(views.html.template.notfound("Bad Request"))

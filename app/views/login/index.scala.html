@@ -3,7 +3,7 @@
 @import forms.{Login, Register}
 @import b4.vertical.fieldConstructor
 
-@(cache: CacheApi, user_uuid: String, login_form: Form[Login], register_form: Form[Register], error: Option[String])(implicit messages:Messages)
+@(cache: CacheApi, user_uuid: String, login_form: Form[Login], register_form: Form[Register], message: Option[String], message_type: String)(implicit messages:Messages)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -20,10 +20,10 @@
                     <div class="row">
                         <div class="col-sm-7"></div>
                         <div class="col-sm-5">
-                            @error match {
+                            @message match {
 
-                                case Some(error) => {
-                                    <div class="alert alert-danger" role="alert">@error</div>
+                                case Some(m) => {
+                                    <div class="alert alert-@message_type" role="alert">@m</div>
                                 }
 
                                 case _ => {

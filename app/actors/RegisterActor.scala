@@ -24,15 +24,15 @@ class RegisterActor @Inject()(mailerClient: MailerClient, user: UserImpl, auth: 
 
                     val auth_key = Security.generateKey()
                     auth.create(x.toInt, Security.encrypt(auth_key))
+                    val title = "please auth"
                     val auth_url = s"http://localhost:9000${routes.AuthController.auth().url}?key=$auth_key"
 
                     val message =
-                        s"""
-                            please auth
-                            $auth_url
-                        """
+                        s"""|please auth
+                            |$auth_url
+                        """.stripMargin
 
-                    mailActor ! (message, email, "Ok")
+                    mailActor ! (title, email, message)
                 }
                 case None => Logger.error("create user failed")
             }

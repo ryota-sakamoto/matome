@@ -16,7 +16,8 @@ class LoginController @Inject()(implicit cache: CacheApi, val messagesApi: Messa
 
     def index = Action { implicit request =>
         val message = request.flash.get("message")
-        Ok(views.html.login.index(cache, "", LoginForm.form, RegisterForm.form, message))
+        val message_type = request.flash.get("message_type").getOrElse("danger")
+        Ok(views.html.login.index(cache, "", LoginForm.form, RegisterForm.form, message, message_type))
     }
 
     def login = Action { implicit request =>
