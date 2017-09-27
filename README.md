@@ -36,3 +36,6 @@ $ docker exec -it app bash
 - API
 - UI周り (Bootstrap => MUI?)
 - Modelの共通化(DIしたい)
+
+### 構成変更予定
+- API Server + Riot
