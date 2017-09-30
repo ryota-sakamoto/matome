@@ -1,9 +1,6 @@
 @import template._
-@import play.cache.CacheApi
-@import forms.Register
-@import b4.vertical.fieldConstructor
 
-@(cache: CacheApi, uuid: String)
+@(user: Option[User])
 
 <!DOCTYPE html>
 <html lang="en">
@@ -12,7 +9,7 @@
     <title>Send Mail</title>
     </head>
     <body>
-        @header(cache, uuid, "register")
+        @header(user, "register")
         <div class="container">
             <div class="row">
                 <div class="col">

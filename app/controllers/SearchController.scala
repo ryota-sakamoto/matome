@@ -4,20 +4,21 @@ import javax.inject._
 
 import forms.SearchForm
 import models.elasticsearch.Elastic
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.cache.AsyncCacheApi
 import play.api.mvc._
-import play.cache.CacheApi
-import utils.Security
+import utils.{Security, UserCache}
 
 @Singleton
-class SearchController @Inject()(cache: CacheApi, val messagesApi: MessagesApi) extends Controller  with I18nSupport {
-    def index = Action { request =>
+class SearchController @Inject()(implicit cache: AsyncCacheApi, messagesAction: MessagesActionBuilder) extends Controller {
+    def index = messagesAction { implicit request: MessagesRequest[AnyContent] =>
         val user_uuid = Security.getSessionUUID(request)
-        Ok(views.html.search.index(cache, user_uuid, SearchForm.form))
+        val user = UserCache.get(user_uuid)
+        Ok(views.html.search.index(user, SearchForm.form))
     }
 
-    def result = Action { request =>
+    def result = Action { implicit request: Request[AnyContent] =>
         val user_uuid = Security.getSessionUUID(request)
+        val user = UserCache.get(user_uuid)
         val word = request.getQueryString("word")
         val query = word match {
             case Some(q) => q.split(' ')
@@ -30,6 +31,6 @@ class SearchController @Inject()(cache: CacheApi, val messagesApi: MessagesApi) 
             r
         }
 
-        Ok(views.html.search.result(cache, user_uuid, query.mkString(" "), result))
+        Ok(views.html.search.result(user, query.mkString(" "), result))
     }
 }

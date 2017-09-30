@@ -2,16 +2,17 @@ package controllers
 
 import javax.inject._
 
-import utils.Security
+import utils.{Security, UserCache}
 import play.api.mvc._
-import play.cache.CacheApi
+import play.api.cache.AsyncCacheApi
 
 @Singleton
-class HomeController @Inject()(cache: CacheApi) extends Controller {
+class HomeController @Inject()(implicit cache: AsyncCacheApi, cc:ControllerComponents) extends AbstractController(cc) {
 
-    def index = Action { implicit request =>
+    def index = Action { implicit request: Request[AnyContent] =>
         val user_uuid = Security.getSessionUUID(request)
+        val user = UserCache.get(user_uuid)
 
-        Ok(views.html.home.index(cache, user_uuid))
+        Ok(views.html.home.new_index(user))
     }
 }

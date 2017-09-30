@@ -6,13 +6,13 @@ import actions.AuthAction
 import forms.SettingAccountForm
 import models.UserImpl
 import play.api.Logger
+import play.api.cache.AsyncCacheApi
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
-import play.cache.CacheApi
 import utils.{Security, UserCache}
 
 @Singleton
-class SettingAccountController @Inject()(implicit cache: CacheApi, val messagesApi: MessagesApi, user: UserImpl) extends Controller with I18nSupport {
+class SettingAccountController @Inject()(implicit cache: AsyncCacheApi, val messagesApi: MessagesApi, user: UserImpl) extends Controller with I18nSupport {
     val prefix = "[SettingAccountController]"
 
     def index = AuthAction ( cache,
@@ -22,7 +22,7 @@ class SettingAccountController @Inject()(implicit cache: CacheApi, val messagesA
             val alert_type = request.flash.get("type")
             val user_data = UserCache.get(user_uuid).get
 
-            Ok(views.html.settings.account(cache, user_uuid, SettingAccountForm.form, user_data, alert_type, message))
+            Ok(views.html.settings.account(user_data, SettingAccountForm.form, alert_type, message))
         }
     )
 

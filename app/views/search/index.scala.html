@@ -3,7 +3,7 @@
 @import forms.Search
 @import b4.vertical.fieldConstructor
 
-@(cache: CacheApi, user_uuid: String, form: Form[Search])(implicit messages:Messages)
+@(user: Option[User], form: Form[Search])(implicit request: MessagesRequestHeader)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -12,7 +12,7 @@
     <title>Search</title>
     </head>
     <body>
-        @header(cache, user_uuid, "search")
+        @header(user, "search")
         <div class="container">
             <div class="row" style="margin-bottom: 10px">
                 <div class="col">

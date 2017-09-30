@@ -1,9 +1,8 @@
 @import template.{script, header}
-@import play.cache.CacheApi
 @import forms.{Login, Register}
 @import b4.vertical.fieldConstructor
 
-@(cache: CacheApi, user_uuid: String, login_form: Form[Login], register_form: Form[Register], message: Option[String], message_type: String)(implicit messages:Messages)
+@(user: Option[User], login_form: Form[Login], register_form: Form[Register], message: Option[String], message_type: String)(implicit messages:Messages)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -12,7 +11,7 @@
     <title>Login</title>
     </head>
     <body>
-        @header(cache, user_uuid, "login")
+        @header(user, "login")
         <div class="container">
             <div class="row">
                 <div class="col-sm-1 "></div>

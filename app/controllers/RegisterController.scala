@@ -5,14 +5,17 @@ import javax.inject._
 import akka.actor.ActorRef
 import forms.{Register, RegisterForm}
 import models.UserImpl
+import play.api.cache.AsyncCacheApi
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.mailer.MailerClient
 import play.api.mvc._
-import play.cache.CacheApi
+import utils.{Security, UserCache}
 
 @Singleton
-class RegisterController @Inject()(cache: CacheApi, mailerClient: MailerClient, @Named("registerActor") registerActor: ActorRef, user_impl: UserImpl, val messagesApi: MessagesApi) extends Controller with I18nSupport {
-    def index = Action { implicit request =>
+class RegisterController @Inject()(implicit cache: AsyncCacheApi, mailerClient: MailerClient, @Named("registerActor") registerActor: ActorRef, user_impl: UserImpl, val messagesApi: MessagesApi) extends Controller with I18nSupport {
+    def index = Action { implicit request: Request[AnyContent] =>
+        val user_uuid = Security.getSessionUUID(request)
+        val user = UserCache.get(user_uuid)
         val flash = request.flash
         val message = flash.get("message")
         val form = RegisterForm.form.fill(
@@ -23,10 +26,10 @@ class RegisterController @Inject()(cache: CacheApi, mailerClient: MailerClient, 
                 confirm_password = ""
             )
         )
-        Ok(views.html.register.index(cache, "", form, message))
+        Ok(views.html.register.index(user, form, message))
     }
 
-    def register = Action { implicit request =>
+    def register = Action { implicit request: Request[AnyContent] =>
         val f = RegisterForm.form.bindFromRequest
 
         val form_error = f.errors.map( error =>
@@ -60,7 +63,7 @@ class RegisterController @Inject()(cache: CacheApi, mailerClient: MailerClient, 
             f.value match {
                 case Some(form) => {
                     registerActor ! form
-                    Ok(views.html.register.success(cache, ""))
+                    Ok(views.html.register.success(None))
                 }
                 case None => {
                     BadRequest(views.html.template.notfound("Bad Request"))

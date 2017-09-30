@@ -1,9 +1,8 @@
 @import template._
-@import play.cache.CacheApi
 @import b4.vertical.fieldConstructor
 @import forms.BlogEdit
 
-@(cache: CacheApi, user_uuid: String, blog_opt: Option[Blog], blog_type: Seq[BlogType], form: Form[BlogEdit])(implicit messages:Messages)
+@(user: Option[User], blog_opt: Option[Blog], blog_type: Seq[BlogType], form: Form[BlogEdit])(implicit messages:Messages)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -12,7 +11,7 @@
         <title>Settings</title>
     </head>
     <body>
-        @header(cache, user_uuid, "settings")
+        @header(user, "settings")
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-1"></div>

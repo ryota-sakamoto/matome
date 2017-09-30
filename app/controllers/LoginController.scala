@@ -3,24 +3,24 @@ package controllers
 import javax.inject._
 
 import play.api.mvc._
-import play.cache.CacheApi
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.Logger
 import forms.{LoginForm, RegisterForm}
 import models.UserImpl
+import play.api.cache.AsyncCacheApi
 import utils.{Security, UserCache}
 
 @Singleton
-class LoginController @Inject()(implicit cache: CacheApi, val messagesApi: MessagesApi, user: UserImpl) extends Controller with I18nSupport {
+class LoginController @Inject()(implicit cache: AsyncCacheApi, val messagesApi: MessagesApi, user: UserImpl) extends Controller with I18nSupport {
     val prefix = "[LoginController]"
 
-    def index = Action { implicit request =>
+    def index = Action { implicit request: Request[AnyContent] =>
         val message = request.flash.get("message")
         val message_type = request.flash.get("message_type").getOrElse("danger")
-        Ok(views.html.login.index(cache, "", LoginForm.form, RegisterForm.form, message, message_type))
+        Ok(views.html.login.index(None, LoginForm.form, RegisterForm.form, message, message_type))
     }
 
-    def login = Action { implicit request =>
+    def login = Action { implicit request: Request[AnyContent] =>
         val f = LoginForm.form.bindFromRequest
 
         f.value match {
@@ -42,7 +42,7 @@ class LoginController @Inject()(implicit cache: CacheApi, val messagesApi: Messa
         }
     }
 
-    def logout = Action { implicit request =>
+    def logout = Action { implicit request: Request[AnyContent] =>
         val user_uuid = Security.getSessionUUID(request)
         UserCache.remove(user_uuid)
 

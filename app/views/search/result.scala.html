@@ -1,8 +1,7 @@
 @import template._
-@import play.cache.CacheApi
 @import models.elasticsearch.SearchResult
 
-@(cache: CacheApi, user_uuid: String, word: String, result: Array[SearchResult])
+@(user: Option[User], word: String, result: Array[SearchResult])
 
 <!DOCTYPE html>
 <html lang="en">
@@ -11,7 +10,7 @@
     <title>Search</title>
     </head>
     <body>
-        @header(cache, user_uuid, "search")
+        @header(user, "search")
         <div class="container">
             <div class="row" style="margin-bottom: 10px">
                 <div class="col">

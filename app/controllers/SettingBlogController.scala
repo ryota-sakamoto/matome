@@ -6,20 +6,20 @@ import javax.inject._
 import actions.AuthAction
 import play.api.mvc._
 import models.{Blog, BlogImpl, BlogTypeImpl}
-import play.cache.CacheApi
 import utils.{Security, UserCache}
 import forms.BlogEditForm
+import play.api.cache.AsyncCacheApi
 import play.api.i18n.{I18nSupport, MessagesApi}
 
 @Singleton
-class SettingBlogController @Inject()(implicit cache: CacheApi, val messagesApi: MessagesApi, blog: BlogImpl, blog_type: BlogTypeImpl) extends Controller with I18nSupport {
+class SettingBlogController @Inject()(implicit cache: AsyncCacheApi, val messagesApi: MessagesApi, blog: BlogImpl, blog_type: BlogTypeImpl) extends Controller with I18nSupport {
     def blogList = AuthAction( cache,
         Action { implicit request =>
             val user_uuid = Security.getSessionUUID(request)
             val user = UserCache.get(user_uuid)
 
             val b = blog.findByUserId(user.get.id)
-            Ok(views.html.settings.blog_list(cache, user_uuid, b))
+            Ok(views.html.settings.blog_list(UserCache.get(user_uuid), b))
         })
 
     def blogCreate = AuthAction( cache,
@@ -27,7 +27,7 @@ class SettingBlogController @Inject()(implicit cache: CacheApi, val messagesApi:
             val user_uuid = Security.getSessionUUID(request)
             val blog_type_list = blog_type.list
 
-            Ok(views.html.settings.edit(cache, user_uuid, None, blog_type_list, BlogEditForm.form))
+            Ok(views.html.settings.edit(UserCache.get(user_uuid), None, blog_type_list, BlogEditForm.form))
         }
     )
 
@@ -53,14 +53,14 @@ class SettingBlogController @Inject()(implicit cache: CacheApi, val messagesApi:
     )
 
     def blogEdit(id: String) = AuthAction( cache,
-        Action { implicit request =>
+        Action { implicit request: Request[AnyContent] =>
             val user_uuid = Security.getSessionUUID(request)
             val user = UserCache.get(user_uuid)
 
             val blog_opt = blog.findById(id, user.get.id)
             val blog_type_list = blog_type.list
             blog_opt match {
-                case Some(b) => Ok(views.html.settings.edit(cache, user_uuid, Some(b), blog_type_list, BlogEditForm.form))
+                case Some(b) => Ok(views.html.settings.edit(UserCache.get(user_uuid), Some(b), blog_type_list, BlogEditForm.form))
                 case None => NotFound(views.html.template.notfound("Blog Not Found"))
             }
         }

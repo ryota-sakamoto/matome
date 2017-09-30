@@ -2,15 +2,15 @@ package actions
 
 import controllers.routes
 import play.api.Logger
+import play.api.cache.AsyncCacheApi
 import play.api.mvc.{Action, AnyContent, Request, Result}
 import play.api.mvc.Results.Redirect
-import play.cache.CacheApi
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
 import utils.{Security, UserCache}
 
-case class AuthAction[A] (cache: CacheApi, action: Action[A]) extends Action[A] {
+case class AuthAction[A](cache: AsyncCacheApi, action: Action[A]) extends Action[A] {
     def apply(request: Request[A]): Future[Result] = {
         val prefix = "[AuthAction]"
         Logger.info(s"$prefix start")
@@ -30,4 +30,6 @@ case class AuthAction[A] (cache: CacheApi, action: Action[A]) extends Action[A] 
     }
 
     lazy val parser = action.parser
+
+    override def executionContext: ExecutionContext = ???
 }

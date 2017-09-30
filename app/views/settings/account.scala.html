@@ -2,7 +2,7 @@
 @import forms.SettingAccount
 @import b4.vertical.fieldConstructor
 @import play.cache.CacheApi
-@(cache: CacheApi, user_uuid: String, form: Form[SettingAccount], user: User, alert_type: Option[String], message: Option[String])(implicit messages:Messages)
+@(user: User, form: Form[SettingAccount], alert_type: Option[String], message: Option[String])(implicit messages:Messages)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -11,7 +11,7 @@
     <title>Settings</title>
     </head>
     <body>
-        @header(cache, user_uuid, "settings")
+        @header(Option(user), "settings")
         <div class="container">
             <div class="row">
                 <div class="col">
