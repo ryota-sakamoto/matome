@@ -9,12 +9,11 @@ import models.{Blog, BlogImpl, BlogTypeImpl}
 import utils.{Security, UserCache}
 import forms.BlogEditForm
 import play.api.cache.AsyncCacheApi
-import play.api.i18n.{I18nSupport, MessagesApi}
 
 @Singleton
-class SettingBlogController @Inject()(implicit cache: AsyncCacheApi, val messagesApi: MessagesApi, blog: BlogImpl, blog_type: BlogTypeImpl) extends Controller with I18nSupport {
+class SettingBlogController @Inject()(implicit cache: AsyncCacheApi, blog: BlogImpl, blog_type: BlogTypeImpl, messagesAction: MessagesActionBuilder) extends InjectedController {
     def blogList = AuthAction( cache,
-        Action { implicit request =>
+        Action { implicit request: Request[AnyContent] =>
             val user_uuid = Security.getSessionUUID(request)
             val user = UserCache.get(user_uuid)
 
@@ -23,7 +22,7 @@ class SettingBlogController @Inject()(implicit cache: AsyncCacheApi, val message
         })
 
     def blogCreate = AuthAction( cache,
-        Action { implicit request =>
+        messagesAction { implicit request: MessagesRequest[AnyContent] =>
             val user_uuid = Security.getSessionUUID(request)
             val blog_type_list = blog_type.list
 
@@ -32,7 +31,7 @@ class SettingBlogController @Inject()(implicit cache: AsyncCacheApi, val message
     )
 
     def blogInsert = AuthAction( cache,
-        Action { implicit request =>
+        Action { implicit request: Request[AnyContent] =>
             val f = BlogEditForm.form.bindFromRequest
             val user_uuid = Security.getSessionUUID(request)
             val user = UserCache.get(user_uuid)
@@ -53,7 +52,7 @@ class SettingBlogController @Inject()(implicit cache: AsyncCacheApi, val message
     )
 
     def blogEdit(id: String) = AuthAction( cache,
-        Action { implicit request: Request[AnyContent] =>
+        messagesAction { implicit request: MessagesRequest[AnyContent] =>
             val user_uuid = Security.getSessionUUID(request)
             val user = UserCache.get(user_uuid)
 
@@ -67,7 +66,7 @@ class SettingBlogController @Inject()(implicit cache: AsyncCacheApi, val message
     )
 
     def blogUpdate(id: String) = AuthAction( cache,
-        Action { implicit request =>
+        Action { implicit request: Request[AnyContent] =>
             val f = BlogEditForm.form.bindFromRequest
 
             f.value match {
@@ -82,7 +81,7 @@ class SettingBlogController @Inject()(implicit cache: AsyncCacheApi, val message
     )
 
     def blogDelete(id: String) = AuthAction( cache,
-        Action { implicit request =>
+        Action { implicit request: Request[AnyContent] =>
             val result = blog.delete(id)
 
             result match {

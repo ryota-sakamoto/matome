@@ -8,7 +8,7 @@ import utils.{Security, UserCache}
 import play.api.mvc._
 
 @Singleton
-class UserController @Inject()(implicit cache: AsyncCacheApi, blog: BlogImpl, user: UserImpl) extends Controller {
+class UserController @Inject()(implicit cache: AsyncCacheApi, blog: BlogImpl, user: UserImpl) extends InjectedController {
     val prefix = "[UserController]"
     def show(id: String) = Action { implicit request: Request[AnyContent] =>
         val user_opt = user.findByName(id)

@@ -6,14 +6,13 @@ import akka.actor.ActorRef
 import forms.{Register, RegisterForm}
 import models.UserImpl
 import play.api.cache.AsyncCacheApi
-import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.mailer.MailerClient
 import play.api.mvc._
 import utils.{Security, UserCache}
 
 @Singleton
-class RegisterController @Inject()(implicit cache: AsyncCacheApi, mailerClient: MailerClient, @Named("registerActor") registerActor: ActorRef, user_impl: UserImpl, val messagesApi: MessagesApi) extends Controller with I18nSupport {
-    def index = Action { implicit request: Request[AnyContent] =>
+class RegisterController @Inject()(implicit cache: AsyncCacheApi, mailerClient: MailerClient, @Named("registerActor") registerActor: ActorRef, user_impl: UserImpl, messagesAction: MessagesActionBuilder) extends InjectedController {
+    def index = messagesAction { implicit request: MessagesRequest[AnyContent] =>
         val user_uuid = Security.getSessionUUID(request)
         val user = UserCache.get(user_uuid)
         val flash = request.flash

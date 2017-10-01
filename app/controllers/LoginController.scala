@@ -3,7 +3,6 @@ package controllers
 import javax.inject._
 
 import play.api.mvc._
-import play.api.i18n.{I18nSupport, MessagesApi}
 import play.Logger
 import forms.{LoginForm, RegisterForm}
 import models.UserImpl
@@ -11,10 +10,10 @@ import play.api.cache.AsyncCacheApi
 import utils.{Security, UserCache}
 
 @Singleton
-class LoginController @Inject()(implicit cache: AsyncCacheApi, val messagesApi: MessagesApi, user: UserImpl) extends Controller with I18nSupport {
+class LoginController @Inject()(implicit cache: AsyncCacheApi, user: UserImpl, messagesAction: MessagesActionBuilder) extends InjectedController {
     val prefix = "[LoginController]"
 
-    def index = Action { implicit request: Request[AnyContent] =>
+    def index = messagesAction { implicit request: MessagesRequest[AnyContent] =>
         val message = request.flash.get("message")
         val message_type = request.flash.get("message_type").getOrElse("danger")
         Ok(views.html.login.index(None, LoginForm.form, RegisterForm.form, message, message_type))

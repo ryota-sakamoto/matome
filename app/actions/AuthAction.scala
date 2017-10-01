@@ -31,5 +31,5 @@ case class AuthAction[A](cache: AsyncCacheApi, action: Action[A]) extends Action
 
     lazy val parser = action.parser
 
-    override def executionContext: ExecutionContext = ???
+    override def executionContext: ExecutionContext = action.executionContext
 }

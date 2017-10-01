@@ -1,8 +1,9 @@
 @import template._
 @import b4.vertical.fieldConstructor
 @import forms.BlogEdit
+@import helper._
 
-@(user: Option[User], blog_opt: Option[Blog], blog_type: Seq[BlogType], form: Form[BlogEdit])(implicit messages:Messages)
+@(user: Option[User], blog_opt: Option[Blog], blog_type: Seq[BlogType], form: Form[BlogEdit])(implicit request: MessagesRequestHeader)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -21,6 +22,7 @@
                         @blog_opt match {
                             case Some(blog) => {
                                 @b4.form(routes.SettingBlogController.blogUpdate(blog.id)) {
+                                    @CSRF.formField
                                     <div class="form-group">
                                         <label>Name</label>
                                         @b4.text(form("name"), 'placeholder -> "Name", 'value -> blog.name)
@@ -47,6 +49,9 @@
                                                 $.ajax({
                                                     type: "delete",
                                                     url: "@routes.SettingBlogController.blogDelete(blog.id)",
+                                                    data: {
+                                                        csrfToken: $("form input").filter((i, v) => { return v.name === "csrfToken" }).val()
+                                                    }
                                                 }).done(() => {
                                                     location.href = "@routes.SettingBlogController.blogList()"
                                                 })
@@ -58,6 +63,7 @@
 
                             case None => {
                                 @b4.form(routes.SettingBlogController.blogInsert()) {
+                                    @CSRF.formField
                                     <div class="form-group">
                                         <label>Name</label>
                                         @b4.text(form("name"), 'placeholder -> "Name")

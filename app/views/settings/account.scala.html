@@ -1,8 +1,9 @@
 @import template._
 @import forms.SettingAccount
 @import b4.vertical.fieldConstructor
-@import play.cache.CacheApi
-@(user: User, form: Form[SettingAccount], alert_type: Option[String], message: Option[String])(implicit messages:Messages)
+@import helper._
+
+@(user: User, form: Form[SettingAccount], alert_type: Option[String], message: Option[String])(implicit request: MessagesRequestHeader)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -27,6 +28,7 @@
                         <div class="card-header">Account Settings</div>
                         <div class="card-block">
                             @b4.form(routes.SettingAccountController.save()) {
+                                @CSRF.formField
                                 <div class="form-group form-inline">
                                     <label class="col-2">Name</label>
                                     @b4.text(form("name"), 'placeholder -> "Name", 'value -> user.name)

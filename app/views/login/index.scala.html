@@ -1,8 +1,9 @@
 @import template.{script, header}
 @import forms.{Login, Register}
 @import b4.vertical.fieldConstructor
+@import helper._
 
-@(user: Option[User], login_form: Form[Login], register_form: Form[Register], message: Option[String], message_type: String)(implicit messages:Messages)
+@(user: Option[User], login_form: Form[Login], register_form: Form[Register], message: Option[String], message_type: String)(implicit request: MessagesRequestHeader)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -41,6 +42,7 @@
                             <div class="card">
                                 <div id="login-screen-block" class="card-block">
                                 @b4.form(routes.LoginController.login()) {
+                                    @CSRF.formField
                                     <div class="form-group">
                                         <label>UserId</label>
                                         @b4.text(login_form("name"), 'placeholder -> "UserId")

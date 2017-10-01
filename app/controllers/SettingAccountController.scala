@@ -7,16 +7,15 @@ import forms.SettingAccountForm
 import models.UserImpl
 import play.api.Logger
 import play.api.cache.AsyncCacheApi
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, Controller}
+import play.api.mvc._
 import utils.{Security, UserCache}
 
 @Singleton
-class SettingAccountController @Inject()(implicit cache: AsyncCacheApi, val messagesApi: MessagesApi, user: UserImpl) extends Controller with I18nSupport {
+class SettingAccountController @Inject()(implicit cache: AsyncCacheApi, user: UserImpl, messagesAction: MessagesActionBuilder) extends InjectedController {
     val prefix = "[SettingAccountController]"
 
     def index = AuthAction ( cache,
-        Action { implicit request =>
+        messagesAction { implicit request: MessagesRequest[AnyContent] =>
             val user_uuid = Security.getSessionUUID(request)
             val message = request.flash.get("message")
             val alert_type = request.flash.get("type")
@@ -26,8 +25,9 @@ class SettingAccountController @Inject()(implicit cache: AsyncCacheApi, val mess
         }
     )
 
+    @deprecated("Use Either", "")
     def save = AuthAction ( cache,
-        Action { implicit request =>
+        Action { implicit request: Request[AnyContent] =>
             val f = SettingAccountForm.form.bindFromRequest
             val user_uuid = Security.getSessionUUID(request)
             val cache_user_data = UserCache.get(user_uuid).get

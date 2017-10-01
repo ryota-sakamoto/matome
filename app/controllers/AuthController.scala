@@ -5,14 +5,14 @@ import javax.inject._
 import models.{AuthImpl, UserImpl}
 import play.api.Logger
 import play.api.mvc._
-import play.cache.CacheApi
+import play.api.cache.AsyncCacheApi
 import utils.Security
 
 @Singleton
-class AuthController @Inject()(cache: CacheApi, authImpl: AuthImpl, userImpl: UserImpl) extends Controller {
+class AuthController @Inject()(cache: AsyncCacheApi, authImpl: AuthImpl, userImpl: UserImpl) extends InjectedController {
     val prefix = "[AuthController]"
 
-    def auth = Action { implicit request =>
+    def auth = Action { implicit request: Request[AnyContent] =>
         val key_opt = request.getQueryString("key")
         key_opt match {
             case Some(key) => {

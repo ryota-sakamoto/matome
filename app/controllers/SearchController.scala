@@ -9,7 +9,7 @@ import play.api.mvc._
 import utils.{Security, UserCache}
 
 @Singleton
-class SearchController @Inject()(implicit cache: AsyncCacheApi, messagesAction: MessagesActionBuilder) extends Controller {
+class SearchController @Inject()(implicit cache: AsyncCacheApi, messagesAction: MessagesActionBuilder) extends InjectedController {
     def index = messagesAction { implicit request: MessagesRequest[AnyContent] =>
         val user_uuid = Security.getSessionUUID(request)
         val user = UserCache.get(user_uuid)
