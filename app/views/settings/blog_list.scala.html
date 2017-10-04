@@ -36,14 +36,6 @@
                         $(document).on("click", "#new-button", () => {
                             location.href = "@routes.SettingBlogController.blogCreate()"
                         });
-                        $("#aggregate").on("click", () => {
-                            $.ajax({
-                                url: "@routes.CronController.aggregateArticle()",
-                                type: "post"
-                            }).done(() => {
-                                alert("success")
-                            })
-                        });
                         const edit_blog = (obj) => {
                             location.href = obj.getAttribute("href");
                         }
