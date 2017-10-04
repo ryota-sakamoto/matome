@@ -5,13 +5,13 @@ import javax.inject.Inject
 import actors.status.End
 import akka.actor.{Actor, PoisonPill, Props}
 import models.aggregation._
-import models.elasticsearch.Elastic
+import models.elasticsearch.ElasticSearch
 import models._
 import play.Logger
 import play.api.libs.mailer.MailerClient
 import play.api.libs.ws._
 
-class AggregationActor @Inject()(implicit ws_client: WSClient, mailerClient: MailerClient, blog: BlogImpl, blog_type_impl: BlogTypeImpl, user: UserImpl, article: ArticleImpl) extends Actor {
+class AggregationActor @Inject()(implicit ws_client: WSClient, mailerClient: MailerClient, blog: BlogImpl, blog_type_impl: BlogTypeImpl, user: UserImpl, article: ArticleImpl, elasticSearch: ElasticSearch) extends Actor {
     val prefix = "[AggregationActor]"
     var blog_count = 0
 
@@ -41,7 +41,7 @@ class AggregationActor @Inject()(implicit ws_client: WSClient, mailerClient: Mai
                     if (data.update_date.compareTo(blog_data.update_date) > 0) {
                         val article_data = Article(0, blog_data.id, data.title, data.link, data.update_date)
                         article.insert(article_data)
-                        Elastic.insert(blog_data.name, article_data)
+                        elasticSearch.index(blog_data.name, article_data)
                         if (data.update_date.compareTo(last_update_date) > 0) {
                             last_update_date = data.update_date
                         }

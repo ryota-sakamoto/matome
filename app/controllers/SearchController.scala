@@ -3,13 +3,13 @@ package controllers
 import javax.inject._
 
 import forms.SearchForm
-import models.elasticsearch.Elastic
+import models.elasticsearch.ElasticSearch
 import play.api.cache.AsyncCacheApi
 import play.api.mvc._
 import utils.{Security, UserCache}
 
 @Singleton
-class SearchController @Inject()(implicit cache: AsyncCacheApi, messagesAction: MessagesActionBuilder) extends InjectedController {
+class SearchController @Inject()(implicit cache: AsyncCacheApi, messagesAction: MessagesActionBuilder, elasticSearch: ElasticSearch) extends InjectedController {
     def index = messagesAction { implicit request: MessagesRequest[AnyContent] =>
         val user_uuid = Security.getSessionUUID(request)
         val user = UserCache.get(user_uuid)
@@ -26,7 +26,7 @@ class SearchController @Inject()(implicit cache: AsyncCacheApi, messagesAction: 
         }
 
         val result = query.map { q =>
-            Elastic.find(q)
+            elasticSearch.searchByKeyword(q)
         } flatMap { r =>
             r
         }
