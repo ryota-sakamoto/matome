@@ -12,15 +12,15 @@ import play.api.Logger;
 class ErrorHandler extends HttpErrorHandler {
     val prefix = "[ErrorHandler]"
 
-    def onClientError(request: RequestHeader, statusCode: Int, message: String) = {
-        Logger.error(s"$prefix $message")
+    def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
+        Logger.error(s"$prefix $statusCode ${request.target.path} $message")
         Future.successful(
             NotFound(views.html.template.notfound("This Page is Not Found"))
         )
     }
 
-    def onServerError(request: RequestHeader, exception: Throwable) = {
-        Logger.error(s"$prefix $exception")
+    def onServerError(request: RequestHeader, exception: Throwable): Future[Result] = {
+        Logger.error(s"$prefix ${exception.getStackTrace.mkString("\n")}")
         Future.successful(
             InternalServerError(views.html.template.notfound("Server Error"))
         )
