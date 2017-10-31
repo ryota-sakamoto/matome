@@ -1,3 +1,4 @@
++ noauth
 GET     /                           controllers.HomeController.index
 GET     /search                     controllers.SearchController.index()
 GET     /search/result              controllers.SearchController.result()
@@ -12,7 +13,9 @@ GET     /settings/blogs/:id         controllers.SettingBlogController.blogEdit(i
 POST    /settings/blogs/:id         controllers.SettingBlogController.blogUpdate(id: String)
 DELETE  /settings/blogs/:id         controllers.SettingBlogController.blogDelete(id: String)
 
++ noauth
 GET     /login                      controllers.LoginController.index
++ noauth
 POST    /login                      controllers.LoginController.login
 GET     /logout                     controllers.LoginController.logout
 
@@ -21,10 +24,13 @@ POST    /register                   controllers.RegisterController.register
 
 GET     /auth                       controllers.AuthController.auth
 
++ noauth
 GET     /$id<[0-9a-zA-Z_]+>         controllers.UserController.show(id: String)
 GET     /$id<[0-9a-zA-Z_]+>/rss     controllers.UserController.rss(id: String)
 
-+ nocsrf
+->      /api/v0                     route.AppRouter
++ noauth
 ->      /api/v1                     route.ApiRouter
 
++ noauth
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
