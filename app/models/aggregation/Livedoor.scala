@@ -6,9 +6,9 @@ import utils.Aggregation
 object Livedoor extends AggregationTrait {
     val blog_type = "livedoor"
 
-    def aggregate(url: String)(implicit ws_client: WSClient): Set[ArticleData] = {
+    def aggregate(url: String)(implicit ws_client: WSClient): Seq[ArticleData] = {
         val data = get(getRssURL(url))
-        var set: Set[ArticleData] = Set.empty[ArticleData]
+        var set: Seq[ArticleData] = Seq.empty[ArticleData]
 
         data match {
             case Some(s) => {
@@ -22,7 +22,7 @@ object Livedoor extends AggregationTrait {
                             val date = (_s \ "date").text
                             val update_date = Aggregation.convertToDate(date)
 
-                            set = set + ArticleData(title, link, update_date)
+                            set = set :+ ArticleData(title, link, update_date)
                         }
                         case _ =>
                     }

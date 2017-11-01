@@ -8,7 +8,7 @@ import anorm.SqlParser._
 import play.api.db.Database
 import play.api.libs.json.{Json, Writes}
 
-case class Article(id: Int, blog_id: String, title: String, url: String, update_date: Date)
+case class Article(id: String, blog_id: String, title: String, url: String, update_date: Date)
 
 object Article {
     implicit object ArticleWriter extends Writes[Article] {
@@ -25,7 +25,7 @@ object Article {
 }
 
 class ArticleImpl @Inject()(db: Database) {
-    val parser = int("id") ~ str("blog_id") ~ str("title") ~ str("url") ~ date("update_date")
+    val parser = str("id") ~ str("blog_id") ~ str("title") ~ str("url") ~ date("update_date")
     val mapper = parser.map {
         case id ~ blog_id ~ title ~ url ~ update_date => Article(id, blog_id, title, url, update_date)
     }
@@ -43,12 +43,19 @@ class ArticleImpl @Inject()(db: Database) {
         }
     }
 
-    def insert(article: Article) = {
+    def bulkInsert(articles: Seq[Article]) = {
+        val sql = "insert into article values " + articles.map { article =>
+            "('%s', '%s', '%s', '%s', FROM_UNIXTIME(%d))".format(
+                article.id,
+                article.blog_id,
+                article.title,
+                article.url,
+                article.update_date.getTime / 1000
+            )
+        }.mkString(",")
+
         db.withConnection { implicit c =>
-            SQL(
-                """
-                   insert into article values(null, {blog_id}, {title}, {url}, {update_date})
-                """).on("blog_id" -> article.blog_id, "title" -> article.title, "url" -> article.url, "update_date" -> article.update_date).executeInsert()
+            SQL(sql).executeInsert()
         }
     }
 }

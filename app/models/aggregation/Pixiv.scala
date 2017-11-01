@@ -10,8 +10,8 @@ object Pixiv extends AggregationTrait {
     val blog_type: String = "pixiv"
     val date_regex = """https?://.*img-master/img/(\d+)/(\d+)/(\d+)/(\d+)/(\d+)/(\d+)/.+""".r
 
-    def aggregate(url: String)(implicit ws_client: WSClient): Set[ArticleData] = {
-        var set = Set.empty[ArticleData]
+    def aggregate(url: String)(implicit ws_client: WSClient): Seq[ArticleData] = {
+        var set = Seq.empty[ArticleData]
 
         val document = Jsoup.connect("https://www.pixiv.net/search.php").data("word", "東方").get()
         val images = document.getElementsByClass("image-item")
@@ -36,7 +36,7 @@ object Pixiv extends AggregationTrait {
             }
 
             data match {
-                case Some(article) => set = set + article
+                case Some(article) => set = set :+ article
                 case None =>
             }
         }

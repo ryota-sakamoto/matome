@@ -16,7 +16,7 @@ trait AggregationTrait {
     val prefix = "[AggregationTrait]"
     val blog_type: String
 
-    def aggregate(url: String)(implicit ws_client: WSClient): Set[ArticleData]
+    def aggregate(url: String)(implicit ws_client: WSClient): Seq[ArticleData]
 
     def get(url: String)(implicit ws_client: WSClient): Option[NodeSeq] = {
         implicit val context = play.api.libs.concurrent.Execution.Implicits.defaultContext

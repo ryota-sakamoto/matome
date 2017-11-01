@@ -5,9 +5,9 @@ import utils.Aggregation
 object Ameblo extends AggregationTrait {
     val blog_type = "ameblo"
 
-    def aggregate(url: String)(implicit ws_client: WSClient): Set[ArticleData] = {
+    def aggregate(url: String)(implicit ws_client: WSClient): Seq[ArticleData] = {
         val data = get(getRssURL(url))
-        var set: Set[ArticleData] = Set.empty[ArticleData]
+        var set: Seq[ArticleData] = Seq.empty[ArticleData]
 
         data match {
             case Some(s) => {
@@ -19,7 +19,7 @@ object Ameblo extends AggregationTrait {
                             val date = convert((item \ "date").text)
                             val update_date = Aggregation.convertToDate(date)
 
-                            set += ArticleData(title, link, update_date)
+                            set = set :+ ArticleData(title, link, update_date)
                         }
                         case _ =>
                     }

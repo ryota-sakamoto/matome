@@ -10,6 +10,7 @@ import models._
 import play.Logger
 import play.api.libs.mailer.MailerClient
 import play.api.libs.ws._
+import utils.Security
 
 class AggregationActor @Inject()(implicit ws_client: WSClient, mailerClient: MailerClient, blog: BlogImpl, blog_type_impl: BlogTypeImpl, user: UserImpl, article: ArticleImpl, elasticSearch: ElasticSearch) extends Actor {
     val prefix = "[AggregationActor]"
@@ -35,30 +36,40 @@ class AggregationActor @Inject()(implicit ws_client: WSClient, mailerClient: Mai
                     }
                 }
 
-                var last_update_date = blog_data.update_date
-
-                article_data.foreach { data =>
-                    if (data.update_date.compareTo(blog_data.update_date) > 0) {
-                        val article_data = Article(0, blog_data.id, data.title, data.link, data.update_date)
-                        article.insert(article_data)
-                        elasticSearch.index(blog_data.name, article_data)
-                        if (data.update_date.compareTo(last_update_date) > 0) {
-                            last_update_date = data.update_date
-                        }
-                    }
+                val new_articles = article_data filter { data =>
+                    data.update_date.compareTo(blog_data.update_date) > 0
+                } map { data =>
+                    val id = Security.generateUUID()
+                    val article_data = Article(id, blog_data.id, data.title, data.link, data.update_date)
+                    elasticSearch.index(blog_data.name, article_data)
+                    article_data
                 }
 
-                if (last_update_date != blog_data.update_date) {
-                    blog.update(blog_data.id, last_update_date)
+                if (new_articles.nonEmpty) {
+                    article.bulkInsert(new_articles)
 
-                    val email = user.findById(blog_data.user_id) match {
-                        case Some(x) => x.email
-                        case None => ""
+                    val blog_update_date = new_articles map {
+                        _.update_date
+                    } reduce { (a, b) =>
+                        if (a.compareTo(b) > 0) {
+                            a
+                        } else {
+                            b
+                        }
                     }
 
-                    if (blog_data.notification) {
-                        val mail = this.context.actorOf(Props(classOf[MailActor], mailerClient))
-                        mail ! ("Blog update", email, blog_data.name)
+                    if (blog_update_date.compareTo(blog_data.update_date) > 0) {
+                        blog.update(blog_data.id, blog_update_date)
+
+                        val email = user.findById(blog_data.user_id) match {
+                            case Some(x) => x.email
+                            case None => ""
+                        }
+
+                        if (blog_data.notification) {
+                            val mail = this.context.actorOf(Props(classOf[MailActor], mailerClient))
+                            mail ! ("Blog update", email, blog_data.name)
+                        }
                     }
                 }
             }
