@@ -29,10 +29,12 @@ class ElasticSearch @Inject()(config: Configuration) {
         }
     }
 
-    def index(blog_name: String, data: Article) = {
+    def index(blog_name: String, article_data: Seq[Article]) = {
         client.execute {
             bulk(
-                indexInto("matome" / "articles").fields("blog_name" -> blog_name, "title" -> data.title, "url" -> data.url, "update_date" -> data.update_date)
+                article_data.map { data =>
+                    indexInto("matome" / "articles").fields("blog_name" -> blog_name, "title" -> data.title, "url" -> data.url, "update_date" -> data.update_date)
+                }
             ).refresh(RefreshPolicy.WAIT_UNTIL)
         }.await
     }

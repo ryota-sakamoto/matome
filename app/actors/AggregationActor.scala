@@ -41,12 +41,12 @@ class AggregationActor @Inject()(implicit ws_client: WSClient, mailerClient: Mai
                 } map { data =>
                     val id = Security.generateUUID()
                     val article_data = Article(id, blog_data.id, data.title, data.link, data.update_date)
-                    elasticSearch.index(blog_data.name, article_data)
                     article_data
                 }
 
                 if (new_articles.nonEmpty) {
                     article.bulkInsert(new_articles)
+                    elasticSearch.index(blog_data.name, new_articles)
 
                     val blog_update_date = new_articles map {
                         _.update_date
