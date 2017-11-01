@@ -2,6 +2,8 @@ GET     /                           controllers.HomeController.index
 GET     /search                     controllers.SearchController.index()
 GET     /search/result              controllers.SearchController.result()
 
+GET     /articles/:id               controllers.ArticleController.find(id: String)
+
 GET     /settings/account           controllers.SettingAccountController.index()
 POST    /settings/account           controllers.SettingAccountController.save()
 

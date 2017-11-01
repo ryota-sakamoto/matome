@@ -30,6 +30,15 @@ class ArticleImpl @Inject()(db: Database) {
         case id ~ blog_id ~ title ~ url ~ update_date => Article(id, blog_id, title, url, update_date)
     }
 
+    def find(id: String): Option[Article] = {
+        db.withConnection { implicit c =>
+            SQL(
+                """
+                  select * from article where id = {id}
+                """).on("id" -> id).as(mapper.singleOpt)
+        }
+    }
+
     def findByBlogId(blog_id: String, limit: Int, offset: Int): Seq[Article] = {
         db.withConnection { implicit c =>
             SQL(
