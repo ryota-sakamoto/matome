@@ -2,14 +2,14 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
-import models.ArticleImpl
+import models.{ArticleImpl, Favorite, FavoriteImpl}
 import play.api.cache.AsyncCacheApi
 import play.api.mvc.{AnyContent, InjectedController, Request}
 import play.api.cache.NamedCache
-import utils.ArticleCache
+import utils.{ArticleCache, Security, UserCache}
 
 @Singleton
-class ArticleController @Inject()(implicit @NamedCache("articles") cache: AsyncCacheApi, article_impl: ArticleImpl) extends InjectedController {
+class ArticleController @Inject()(implicit @NamedCache("articles") cache: AsyncCacheApi, article_impl: ArticleImpl, favorite_impl: FavoriteImpl) extends InjectedController {
     def find(id: String) = Action { implicit request: Request[AnyContent] =>
         ArticleCache.get(id) match {
             case Some(article) => {
@@ -25,5 +25,20 @@ class ArticleController @Inject()(implicit @NamedCache("articles") cache: AsyncC
                 }
             }
         }
+    }
+
+    def favorite(id: String) = Action { implicit request: Request[AnyContent] =>
+        val uuid = Security.getSessionUUID(request)
+
+        UserCache.get(uuid) match {
+            case Some(user) => {
+                val favorite = Favorite(user.id, id)
+                favorite_impl.insert(favorite)
+            }
+            case None => {
+                // TODO save cookie
+            }
+        }
+        Ok("")
     }
 }

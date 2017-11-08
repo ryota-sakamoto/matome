@@ -15,8 +15,9 @@ object Article {
         override def writes(article: Article) = {
             Json.toJson(
                 Map(
+                    "id" -> Json.toJson(article.id),
                     "title" -> Json.toJson(article.title),
-                    "url" -> Json.toJson(article.url),
+                    "url" -> Json.toJson("/articles/%s".format(article.id)), // TODO
                     "update_date" -> Json.toJson(article.update_date)
                 )
             )
