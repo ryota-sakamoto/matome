@@ -13,6 +13,6 @@ class HomeController @Inject()(implicit cache: AsyncCacheApi) extends InjectedCo
         val user_uuid = Security.getSessionUUID(request)
         val user = UserCache.get(user_uuid)
 
-        Ok(views.html.home.new_index(user))
+        Ok(views.html.home.index(user))
     }
 }

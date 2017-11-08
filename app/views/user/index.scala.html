@@ -63,13 +63,32 @@
                                         `<a href="${data[i]["url"]}" class="list-group-item list-group-item-action">
                                             <div class="d-flex w-100 justify-content-between">
                                             <h6 class="mb-1">${data[i]["title"]}</h6>
+                                            <i class="fa fa-star-o fa-2x favorite" aria-hidden="true"></i>
                                             </div>
                                             <small class="text-muted">${date.format("YYYY-MM-DD HH:mm:ss")}</small>
                                         </a>`
                                 );
                             }
                         };
+
+                        $(document).on("click", ".favorite", (e) => {
+                            e.preventDefault();
+
+                            const target = $(e.target);
+                            const class_name = target.attr("class");
+                            if (class_name.includes("fa-star-o")) {
+                                target.removeClass("fa-star-o").addClass("fa-star");
+                            } else if (class_name.includes("fa-star")) {
+                                target.removeClass("fa-star").addClass("fa-star-o");
+                            }
+                        });
                     </script>
+                    <style>
+                        .favorite {
+                            font-size: 20px;
+                            text-decoration: none;
+                        }
+                    </style>
                 </div>
             </div>
         </div>
